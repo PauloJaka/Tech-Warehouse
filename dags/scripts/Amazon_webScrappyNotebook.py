@@ -12,7 +12,7 @@ def Amazon_Scrappy_Notebook():
                     "Anvazise", "ASHATA", "Santino", "MSI", "Marca Fácil", "Microsoft", "AWOW", "Gateway", "Compaq",
                     "DAUERHAFT", "SGIN", "Luqeeg", "Kiboule", "LG", "Panasonic", "Focket", "Toughbook", "LTI",
                     "GIGABYTE", "Octoo", "Chip7 Informática", "GLOGLOW", "GOLDENTEC", "KUU", "HEEPDD", "Adamantiun",
-                    "Naroote", "Jectse", "Heayzoki"]
+                    "Naroote", "Jectse", "Heayzoki", "Galaxy"]
 
     
     firefox_options = Options()
@@ -32,18 +32,27 @@ def Amazon_Scrappy_Notebook():
                 title_element = item.find_element(By.CSS_SELECTOR, "h2 a span")
                 price_element = item.find_element(By.CSS_SELECTOR, ".a-price-whole")
                 rating_element = item.find_element(By.CSS_SELECTOR, ".a-icon-alt")
+                
+                try:
+                    free_freight = item.find_element(By.CSS_SELECTOR, "span[aria-label='Opção de frete GRÁTIS disponível']")
+                    free_freight = True
+                except:
+                    free_freight = False
+
 
                 title = title_element.text
                 price = price_element.text
                 rating = rating_element.get_attribute("innerHTML").split()[0] if rating_element else "No rating"
 
-                brand = next((b for b in known_brands if b in title), "Unknown")
+                brand = next((b for b in known_brands if b.lower() in title.lower()), "Unknown")
 
                 products.append({
                     'title': title,
                     'price': price,
                     'brand': brand,
-                    'rating': rating,
+                    'rating': rating, 
+                    'free_freight': free_freight,
+                    'Category': 'Notebook',
                     'CreatedAt': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                     'UpdatedAt': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                     'website': 'Amazon'
