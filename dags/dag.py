@@ -5,7 +5,7 @@ import sys
 
 sys.path.append('/opt/airflow/dags/scripts')
 
-from Amazon_webScrappyNotebook import Amazon_Scrappy_Notebook
+from Amazon_Scrappy_Products import Amazon_Scrappy_Products
 
 default_args = {
     'owner': 'airflow',
@@ -27,7 +27,7 @@ dag = DAG(
 
 scrape_task = PythonOperator(
     task_id='Scrape_Amazon',
-    python_callable=Amazon_Scrappy_Notebook,
+    python_callable=Amazon_Scrappy_Products,
     dag=dag,
 )
 
