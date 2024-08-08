@@ -34,6 +34,7 @@ def Amazon_Scrappy_Products():
                 title_element = item.find_element(By.CSS_SELECTOR, "h2 a span")
                 price_element = item.find_element(By.CSS_SELECTOR, ".a-price-whole")
                 rating_element = item.find_element(By.CSS_SELECTOR, ".a-icon-alt")
+                link_element = item.find_element(By.CSS_SELECTOR, "a.a-link-normal.s-underline-text.s-underline-link-text.s-link-style.a-text-normal")
                 
                 try:
                     free_freight = item.find_element(By.CSS_SELECTOR, "span[aria-label='Opção de frete GRÁTIS disponível']")
@@ -41,6 +42,7 @@ def Amazon_Scrappy_Products():
                 except:
                     free_freight = False
 
+                link = link_element.get_attribute("href") if link_element else "No link"
                 title = title_element.text
                 price = price_element.text
                 rating = rating_element.get_attribute("innerHTML").split()[0] if rating_element else "No rating"
@@ -52,6 +54,7 @@ def Amazon_Scrappy_Products():
                     'price': price,
                     'brand': brand,
                     'rating': rating,
+                    'link': link,
                     'free_freight': free_freight,
                     'Category': product_type,
                     'CreatedAt': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
@@ -62,7 +65,7 @@ def Amazon_Scrappy_Products():
                 continue
         return products
 
-    products_list = ["notebook", "smartphone"]  # Adicione os produtos desejados aqui
+    products_list = ["Notebook", "Smartphone"]  
     num_pages = 1
     all_products = []
 
