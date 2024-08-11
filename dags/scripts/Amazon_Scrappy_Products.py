@@ -35,6 +35,7 @@ def Amazon_Scrappy_Products():
                 price_element = item.find_element(By.CSS_SELECTOR, ".a-price-whole")
                 rating_element = item.find_element(By.CSS_SELECTOR, ".a-icon-alt")
                 link_element = item.find_element(By.CSS_SELECTOR, "a.a-link-normal.s-underline-text.s-underline-link-text.s-link-style.a-text-normal")
+                original_price_element = item.find_element(By.CSS_SELECTOR, ".a-price.a-text-price .a-offscreen")
                 
                 try:
                     free_freight = item.find_element(By.CSS_SELECTOR, "span[aria-label='Opção de frete GRÁTIS disponível']")
@@ -44,14 +45,16 @@ def Amazon_Scrappy_Products():
 
                 link = link_element.get_attribute("href") if link_element else "No link"
                 title = title_element.text
-                price = price_element.text
+                discount_price = price_element.text
                 rating = rating_element.get_attribute("innerHTML").split()[0] if rating_element else "No rating"
+                original_price = original_price_element.text if original_price_element else ""
 
                 brand = next((b for b in known_brands if b.lower() in title.lower()), "Unknown")
 
                 products.append({
                     'title': title,
-                    'price': price,
+                    'price_discount': discount_price,
+                    'price_original': original_price,
                     'brand': brand,
                     'rating': rating,
                     'link': link,
