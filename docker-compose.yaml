@@ -25,8 +25,6 @@ x-airflow-common:
       condition: service_healthy
     postgres:
       condition: service_healthy
-    mysql:
-      condition: service_healthy
 
 services:
   postgres:
@@ -53,22 +51,6 @@ services:
       interval: 10s
       timeout: 30s
       retries: 50
-      start_period: 30s
-    restart: always
-
-  mysql:
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: airflow
-      MYSQL_DATABASE: airflow
-      MYSQL_USER: airflow
-      MYSQL_PASSWORD: airflow
-    volumes:
-      - mysql-db-volume:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      retries: 5
       start_period: 30s
     restart: always
 
@@ -197,11 +179,9 @@ services:
       _AIRFLOW_WWW_USER_USERNAME: ${_AIRFLOW_WWW_USER_USERNAME:-airflow}
       _AIRFLOW_WWW_USER_PASSWORD: ${_AIRFLOW_WWW_USER_PASSWORD:-airflow}
       _PIP_ADDITIONAL_REQUIREMENTS: ''
-      
     user: "0:0"
     volumes:
       - ${AIRFLOW_PROJ_DIR:-.}:/sources
 
 volumes:
   postgres-db-volume:
-  mysql-db-volume:
