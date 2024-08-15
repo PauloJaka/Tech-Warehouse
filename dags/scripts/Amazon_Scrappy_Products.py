@@ -48,6 +48,10 @@ def Amazon_Scrappy_Products():
                 discount_price = price_element.text
                 rating = rating_element.get_attribute("innerHTML").split()[0] if rating_element else "No rating"
                 original_price = original_price_element.text if original_price_element else ""
+                
+                discount_price = discount_price.replace('.', '').replace(',', '.') if discount_price else None
+                original_price = original_price.replace('.', '').replace(',', '.') if original_price else None
+                rating = rating.replace('.', '').replace(',', '.') if discount_price else None
 
                 brand = next((b for b in known_brands if b.lower() in title.lower()), "Unknown")
 
@@ -59,16 +63,16 @@ def Amazon_Scrappy_Products():
                     'rating': rating,
                     'link': link,
                     'free_freight': free_freight,
-                    'Category': product_type,
-                    'CreatedAt': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                    'UpdatedAt': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                    'category': product_type,
+                    'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                    'updated_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                     'website': 'Amazon'
                 })
             except Exception as e:
                 continue
         return products
 
-    products_list = ["Notebook", "Smartphone"]  
+    products_list = ["Notebook"]#, "Smartphone", "TV", "Tablet", "Ipad", "Smartwatch"]  
     num_pages = 1
     all_products = []
 
@@ -85,8 +89,9 @@ def Amazon_Scrappy_Products():
     driver.quit()
 
     df = pd.DataFrame(all_products)
-
     print(df.to_string(index=False))
+    
+    return df
 
 if __name__ == "__main__":
     Amazon_Scrappy_Products()
