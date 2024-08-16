@@ -1,10 +1,8 @@
+import sys
+sys.path.append('/opt/airflow/dags/scripts')
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime, timedelta
-import sys
-
-sys.path.append('/opt/airflow/dags/scripts')
-
 from Amazon_Scrappy_Products import Amazon_Scrappy_Products
 from ingestion_data import ingest_data_to_postgres
 

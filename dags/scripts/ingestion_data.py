@@ -1,11 +1,26 @@
 from sqlalchemy import create_engine
 import pandas as pd
+import os
+import logging
+from dotenv import load_dotenv
+
+load_dotenv()
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 def ingest_data_to_postgres(df, table_name):
-    engine = create_engine('postgresql+psycopg2://airflow:airflow@postgres:5432/airflow')    
-
+    user = os.getenv('DB_USER')
+    password = os.getenv('DB_PASSWORD')
+    host = os.getenv('DB_HOST')
+    port = os.getenv('DB_PORT')
+    database = os.getenv('DB_NAME')
+ 
+    connection_string = f'postgresql+psycopg2://{user}:{password}@{host}:{port}/{database}'
+    engine = create_engine(connection_string)    
     try:
         df.to_sql(table_name, engine, schema='lakehouse', if_exists='append', index=False)
-        print(f"Dados inseridos na tabela {table_name} com sucesso.")
+        logger.info(f"Dados inseridos na tabela {table_name} com sucesso.")
     except Exception as e:
-        print(f"Ocorreu um erro ao inserir os dados: {e}")
+        logger.error(f"Ocorreu um erro ao inserir os dados: {e}")
