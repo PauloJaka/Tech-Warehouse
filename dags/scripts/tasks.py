@@ -5,5 +5,6 @@ def generic_scrape_task(scrape_func, **kwargs):
     kwargs['ti'].xcom_push(key='scraped_df', value=df)
 
 def generic_ingest_task(table_name, **kwargs):
-    df = kwargs['ti'].xcom_pull(key='scraped_df', task_ids=kwargs['task_id'])
+    task_id = kwargs['task'].task_id 
+    df = kwargs['ti'].xcom_pull(key='scraped_df', task_ids=task_id)
     ingest_data_to_postgres(df, table_name)
