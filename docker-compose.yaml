@@ -1,5 +1,7 @@
 x-airflow-common:
   &airflow-common
+  env_file:
+    - .env
   image: custom-selenium-node
   environment:
     &airflow-common-env
@@ -25,14 +27,11 @@ x-airflow-common:
       condition: service_healthy
     postgres:
       condition: service_healthy
+      
 
 services:
   postgres:
     image: postgres:13
-    environment:
-      POSTGRES_USER: airflow
-      POSTGRES_PASSWORD: airflow
-      POSTGRES_DB: airflow
     ports:
       - "5433:5432" 
     volumes:
