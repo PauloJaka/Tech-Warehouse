@@ -7,18 +7,8 @@ def Amazon_Scrappy_Products():
     import time
     from datetime import datetime
     import os
+    from utils.utils import known_brands
 
-    known_brands = [
-        "ACER", "ASUS", "SAMSUNG", "Dell", "Positivo", "Lenovo", "VAIO",
-        "HP", "Apple", "Multilaser", "Anvazise", "ASHATA", "Santino", "MSI",
-        "Marca Fácil", "Microsoft", "AWOW", "Gateway", "Compaq", "DAUERHAFT",
-        "SGIN", "Luqeeg", "Kiboule", "LG", "Panasonic", "Focket", "Toughbook",
-        "LTI", "GIGABYTE", "Octoo", "Chip7 Informática", "GLOGLOW", "GOLDENTEC",
-        "KUU", "HEEPDD", "Adamantiun", "Naroote", "Jectse", "Heayzoki", "Galaxy",
-        "Motorola", "Xiaomi", "Nokia", "Poco", "realme", "Infinix", "Blu",
-        "Gshield", "Geonav", "Redmi", "Gorila Shield", "intelbras", "TCL",
-        "Tecno", "Vbestlife", "MaiJin", "SZAMBIT", "Otterbox", "Sony"
-    ]
 
     firefox_options = Options()
     service = FirefoxService(executable_path='/usr/local/bin/geckodriver')
@@ -89,7 +79,6 @@ def Amazon_Scrappy_Products():
     driver.quit()
 
     df = pd.DataFrame(all_products)
-    print(df.to_string(index=False))
     return df
 
 
