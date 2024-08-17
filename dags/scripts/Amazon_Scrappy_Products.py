@@ -5,7 +5,7 @@ def Amazon_Scrappy_Products():
     from selenium.webdriver.firefox.options import Options
     import pandas as pd
     import time
-    from datetime import datetime
+    from datetime import datetime, timedelta
     import os
     from utils.utils import known_brands
 
@@ -47,15 +47,15 @@ def Amazon_Scrappy_Products():
 
                 products.append({
                     'title': title,
-                    'price_discount': discount_price,
-                    'price_original': original_price,
+                    'discount_price': discount_price,
+                    'original_price': original_price,
                     'brand': brand,
                     'rating': rating,
                     'link': link,
                     'free_freight': free_freight,
                     'category': product_type,
-                    'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                    'updated_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                    'created_at': (datetime.now() - timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S'),
+                    'updated_at': (datetime.now() - timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S'),
                     'website': 'Amazon'
                 })
             except Exception as e:
