@@ -90,8 +90,8 @@ def Amazon_Scrappy_Products():
 
     df = pd.DataFrame(all_products)
     print(df.to_string(index=False))
-    
     return df
+
 
 if __name__ == "__main__":
     Amazon_Scrappy_Products()

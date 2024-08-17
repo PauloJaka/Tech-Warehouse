@@ -2,11 +2,8 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime, timedelta
 import sys
-
 sys.path.append('/opt/airflow/dags/scripts')
-
-from Amazon_Scrappy_Products import Amazon_Scrappy_Products
-from tasks import generic_scrape_task, generic_ingest_task
+from tasks import run_scrapy_and_ingest_in_raw
 
 default_args = {
     'owner': 'airflow',
@@ -26,26 +23,9 @@ dag = DAG(
     schedule_interval='@once',
 )
 
-scraping_functions = {
-    'amazon': Amazon_Scrappy_Products
-    #'mercado': Mercado_Scrappy_Products,
-}
-
-for site, scrape_func in scraping_functions.items():
-    scrape_task = PythonOperator(
-        task_id=f'scrape_{site}',
-        python_callable=generic_scrape_task,
-        op_kwargs={'scrape_func': scrape_func},
-        provide_context=True,
-        dag=dag,
-    )
-
-    ingest_task = PythonOperator(
-        task_id=f'ingest_{site}',
-        python_callable=generic_ingest_task,
-        op_kwargs={'table_name': 'raw'},
-        provide_context=True,
-        dag=dag,
-    )
-
-    scrape_task >> ingest_task
+run_scrapy_and_ingest_task = PythonOperator(
+    task_id='run_scrapy_and_ingest',
+    python_callable=run_scrapy_and_ingest_in_raw,
+    provide_context=True,
+    dag=dag,
+)
