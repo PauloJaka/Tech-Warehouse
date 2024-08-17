@@ -24,7 +24,7 @@ dag = DAG(
 )
 
 run_scrapy_and_ingest_task = PythonOperator(
-    task_id='run_scrapy_and_ingest',
+    task_id='run_scrapy_and_ingest_in_raw',
     python_callable=run_scrapy_and_ingest_in_raw,
     provide_context=True,
     dag=dag,
