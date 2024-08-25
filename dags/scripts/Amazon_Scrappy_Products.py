@@ -49,7 +49,7 @@ def collect_data(driver, url, product_type):
             
             discount_price = discount_price.replace('.', '').replace(',', '.') if discount_price else None
             original_price = original_price.replace('.', '').replace(',', '.') if original_price else None
-            rating = rating.replace('.', '').replace(',', '.') if discount_price else None
+            rating = rating.replace('.', '').replace(',', '.') if rating else None
             brand = next((b for b in known_brands if b.lower() in title.lower()), "Unknown")
             products.append({
                 'title': title,
@@ -112,7 +112,7 @@ def Amazon_Scrappy_Products():
     
     gecko_path = os.getenv('Driver')
     products_list = ["Notebook", "Smartphone", "TV", "Tablet", "Ipad", "Smartwatch"] 
-    max_threads = len(products_list)
+    max_threads = 3
     
     all_data = []
     
