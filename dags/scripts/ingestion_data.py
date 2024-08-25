@@ -4,7 +4,6 @@ import os
 import logging
 from dotenv import load_dotenv
 from sqlalchemy import text
-import datetime
 
 load_dotenv()
 
@@ -30,7 +29,8 @@ def ingest_data_to_postgres(df, table_name):
         df.to_sql(table_name, engine, schema='lakehouse', if_exists='append', index=False)
         logger.info(f"Dados inseridos na tabela {table_name} com sucesso.")
     except Exception as e:
-        logger.error(f"Ocorreu um erro ao inserir os dados: {e}")       
+        logger.error(f"Ocorreu um erro ao inserir os dados: {e}")
+        raise       
         
 def get_existing_data(engine):
     query = text("SELECT title, website, id, created_at FROM lakehouse.raw GROUP BY title, website, id, created_at")
