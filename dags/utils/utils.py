@@ -7,5 +7,11 @@ known_brands = [
     "KUU", "HEEPDD", "Adamantiun", "Naroote", "Jectse", "Heayzoki", "Galaxy",
     "Motorola", "Xiaomi", "Nokia", "Poco", "realme", "Infinix", "Blu",
     "Gshield", "Geonav", "Redmi", "Gorila Shield", "intelbras", "TCL",
-    "Tecno", "Vbestlife", "MaiJin", "SZAMBIT", "Otterbox", "Sony"
+    "Tecno", "Vbestlife", "MaiJin", "SZAMBIT", "Otterbox", "Sony",
+    "HAIZ", "HUAWEI", "HAYLOU", "Amazfit", "Ticwatch", "Legado Engenharia",
+    "Microwear", "Lefal Cold", "MPOWER", "Kaymcixs", "Garmin", "123Smart",
+    "Technos", "IWO", "Polar", "Mormaii", "Nandos_Store", "xsmart",
+    "EIGIIS", "Beyamis", "Hrich", "ANCOOL", "Dpofirs", "C7 company",
+    "ShieldForce", "FIT IT", "Blackview", "KALINCO", "Danet", "LDFAS",
+    "VINGVO", "MIJOBS", "KADES", "Naroote", "Gusfeliz"
 ]
