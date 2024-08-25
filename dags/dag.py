@@ -3,7 +3,7 @@ from airflow.operators.python import PythonOperator
 from datetime import datetime, timedelta
 import sys
 sys.path.append('/opt/airflow/dags/scripts')
-from tasks import run_scrapy_and_ingest_in_raw
+from tasks import run_amazon_scrapy_and_ingest, run_mercado_livre_scrapy_and_ingest
 
 default_args = {
     'owner': 'airflow',
@@ -23,9 +23,18 @@ dag = DAG(
     schedule_interval='@once',
 )
 
-run_scrapy_and_ingest_task = PythonOperator(
-    task_id='run_scrapy_and_ingest_in_raw',
-    python_callable=run_scrapy_and_ingest_in_raw,
+#run_amazon_scrapy_and_ingest = PythonOperator(
+#    task_id='run_amazon_scrapy_and_ingest',
+#    python_callable=run_amazon_scrapy_and_ingest,
+#    provide_context=True,
+#    dag=dag,
+#    trigger_rule='dummy'
+#)
+
+run_mercado_livre_scrapy_and_ingest = PythonOperator(
+    task_id='run_mercado_livre_scrapy_and_ingest',
+    python_callable=run_mercado_livre_scrapy_and_ingest,
     provide_context=True,
     dag=dag,
 )
+
