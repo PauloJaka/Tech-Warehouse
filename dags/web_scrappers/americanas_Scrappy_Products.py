@@ -8,7 +8,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import time
 import os
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 from utils.utils import known_brands
 import random
 
@@ -50,17 +50,20 @@ def extract_product_info(driver, product_type, css_selector):
                 if known_brand.lower() in title.lower():
                     brand = known_brand
                     break
+                
+            discount_price = price_discount.replace('.', '').replace(',', '.') if price_discount else None
+            original_price = price_original.replace('.', '').replace(',', '.') if price_original else None
             
             products.append({
                 'title': title,
                 'link': link,
-                'price_original': price_original,
-                'price_discount': price_discount,
+                'original_price': original_price,
+                'discount_price': discount_price,
                 'rating': round(random.uniform(4.0, 5.0), 1),
                 'brand': brand,
-                'product_type': product_type,
-                'CreatedAt': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                'UpdatedAt': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'category': product_type,
+                'created_at': (datetime.now() - timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S'),
+                'updated_at': (datetime.now() - timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S'),
                 'website': 'Americanas'
             })
         
@@ -72,7 +75,6 @@ def extract_product_info(driver, product_type, css_selector):
 def scrape_page(driver, url, product_type, css_selector):
     driver.get(url)
     wait_for_elements(driver, css_selector)
-    time.sleep(3) 
     return extract_product_info(driver, product_type, css_selector)
 
 def scrape_americanas(product, gecko_path, num_pages=1):
@@ -87,6 +89,10 @@ def scrape_americanas(product, gecko_path, num_pages=1):
             print(f"Scraping page {page} of {num_pages} for product {product}")
             products = scrape_page(driver, url, product, css_selector)
             all_products.extend(products)
+            
+            driver.delete_all_cookies()
+            
+            time.sleep(random.uniform(2, 5))
     finally:
         driver.quit()
     
