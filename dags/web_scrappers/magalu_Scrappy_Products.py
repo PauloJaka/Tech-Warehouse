@@ -7,7 +7,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import time
 import os
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 from utils.utils import known_brands
 from bs4 import BeautifulSoup
 import re
@@ -67,8 +67,8 @@ def extract_product_info(soup, product_type):
                         'free_freight': False,
                         'brand': brand,
                         'category': product_type,
-                        'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                        'updated_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                        'created_at': (datetime.now() - timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S'),
+                        'updated_at': (datetime.now() - timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S'),
                         'website': 'Magalu'
                     })
                 
