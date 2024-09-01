@@ -2,6 +2,7 @@ from ingestion.ingestion_data import ingest_data_to_postgres, get_database_conne
 from dags.web_scrappers.amazon_Scrappy_Products import Amazon_Scrappy_Products
 from dags.web_scrappers.mercado_livre_Scrappy_Products import Mercado_Livre_Scrappy_Products
 from dags.web_scrappers.magalu_Scrappy_Products import Magalu_Scrappy_Products
+from dags.web_scrappers.americanas_Scrappy_Products import Americanas_Scrappy_Products
 
 def run_amazon_scrapy_and_ingest():
     engine = get_database_connection()
@@ -47,3 +48,18 @@ def run_magalu_scrapy_and_ingest():
     else:
         print(f"Erro: DataFrame para Magalu está vazio ou não foi gerado corretamente.")
         raise ValueError(f"DataFrame para Magalu é vazio ou None")
+    
+def run_americanas_scrapy_and_ingest():
+    engine = get_database_connection()
+
+    df = Americanas_Scrappy_Products()
+    if df is not None and not df.empty:
+        print(f"DataFrame para Americanas:")
+        
+        table_name = "raw"
+        existing_data = get_existing_data(engine)
+        df = update_existing_data(df, existing_data)
+        ingest_data_to_postgres(df, table_name)
+    else:
+        print(f"Erro: DataFrame para Americanas está vazio ou não foi gerado corretamente.")
+        raise ValueError(f"DataFrame para Americanas é vazio ou None")
