@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from dags.tasks.tasks_raw import run_amazon_scrapy_and_ingest, run_mercado_livre_scrapy_and_ingest, run_magalu_scrapy_and_ingest
+from dags.tasks.tasks_raw import run_amazon_scrapy_and_ingest, run_mercado_livre_scrapy_and_ingest, run_magalu_scrapy_and_ingest, run_americanas_scrapy_and_ingest
 
 default_args = {
     'owner': 'airflow',
@@ -24,12 +24,12 @@ dag = DAG(
     schedule_interval='@once',
 )
 
-run_amazon_scrapy_and_ingest = PythonOperator(
-    task_id='run_amazon_scrapy_and_ingest',
-    python_callable=run_amazon_scrapy_and_ingest,
-    provide_context=True,
-    dag=dag
-)
+#run_amazon_scrapy_and_ingest = PythonOperator(
+#    task_id='run_amazon_scrapy_and_ingest',
+#    python_callable=run_amazon_scrapy_and_ingest,
+#    provide_context=True,
+#    dag=dag
+#)
 
 #run_mercado_livre_scrapy_and_ingest = PythonOperator(
 #    task_id='run_mercado_livre_scrapy_and_ingest',
@@ -44,3 +44,10 @@ run_amazon_scrapy_and_ingest = PythonOperator(
 #    provide_context=True,
 #    dag=dag,
 #)
+
+run_americanas_scrapy_and_ingest = PythonOperator(
+    task_id='run_americanas_scrapy_and_ingest',
+    python_callable=run_americanas_scrapy_and_ingest,
+    provide_context=True,
+    dag=dag,
+)
