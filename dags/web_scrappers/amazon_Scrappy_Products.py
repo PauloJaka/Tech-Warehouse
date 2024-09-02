@@ -102,6 +102,7 @@ def scrape_product_pages(product, gecko_path):
             url = f"{base_url}&page={page}"
             print(f"Scraping page {page} of {max_pages}")
             all_products.extend(collect_data(driver, url, product))
+            driver.delete_all_cookies()
     finally:
         driver.quit()
     
