@@ -10,8 +10,13 @@ known_brands = [
     "Tecno", "Vbestlife", "MaiJin", "SZAMBIT", "Otterbox", "Sony",
     "HAIZ", "HUAWEI", "HAYLOU", "Amazfit", "Ticwatch", "Legado Engenharia",
     "Microwear", "Lefal Cold", "MPOWER", "Kaymcixs", "Garmin", "123Smart",
-    "Technos", "IWO", "Polar", "Mormaii", "Nandos_Store", "xsmart",
+    "Technos", "IWO", "Polar", "Mormaii", "xsmart",
     "EIGIIS", "Beyamis", "Hrich", "ANCOOL", "Dpofirs", "C7 company",
     "ShieldForce", "FIT IT", "Blackview", "KALINCO", "Danet", "LDFAS",
-    "VINGVO", "MIJOBS", "KADES", "Naroote", "Gusfeliz"
+    "VINGVO", "MIJOBS", "KADES", "Naroote", "Gusfeliz",
+    "Fossil", "Withings", "Suunto", "Mobvoi", "Amazfit", "Garmin", "Fitbit",
+    "Huawei", "Apple", "Samsung", "TicWatch", "Polar", "Tag Heuer", "Casio",
+    "Amazfit", "Garmin", "Suunto", "Huawei", "Fitbit", "Amazfit", "Withings",
+    "Fossil", "Huawei", "Michael Kors", "Misfit", "TomTom", "Jawbone", "Zepp","Philco",
+    "Britânia", "Roku", "Dolby", "Philips", "Semp"
 ]
