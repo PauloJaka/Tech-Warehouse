@@ -1,10 +1,11 @@
 from airflow import DAG
-from airflow.operators.python import PythonOperator
 from datetime import datetime, timedelta
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from dags.tasks.tasks_raw import run_amazon_scrapy_and_ingest, run_mercado_livre_scrapy_and_ingest, run_magalu_scrapy_and_ingest, run_americanas_scrapy_and_ingest
+from airflow.operators.python_operator import PythonOperator
+from airflow.utils.task_group import TaskGroup
+
 
 default_args = {
     'owner': 'airflow',
@@ -24,30 +25,32 @@ dag = DAG(
     schedule_interval='@once',
 )
 
-#run_amazon_scrapy_and_ingest = PythonOperator(
-#    task_id='run_amazon_scrapy_and_ingest',
-#    python_callable=run_amazon_scrapy_and_ingest,
-#    provide_context=True,
-#    dag=dag
-#)
 
-#run_mercado_livre_scrapy_and_ingest = PythonOperator(
-#    task_id='run_mercado_livre_scrapy_and_ingest',
-#    python_callable=run_mercado_livre_scrapy_and_ingest,
-#    provide_context=True,
-#    dag=dag,
-#)
-#
-#run_magalu_scrapy_and_ingest = PythonOperator(
-#    task_id='run_magalu_scrapy_and_ingest',
-#    python_callable=run_magalu_scrapy_and_ingest,
-#    provide_context=True,
-#    dag=dag,
-#)
+def scrapy_failure_callback(context):
+    print(f"Tarefa falhou: {context['task_instance'].task_id}")
+    # Adicione aqui qualquer outra lógica, como envio de e-mails, registro de logs, etc.
 
-run_americanas_scrapy_and_ingest = PythonOperator(
-    task_id='run_americanas_scrapy_and_ingest',
-    python_callable=run_americanas_scrapy_and_ingest,
-    provide_context=True,
-    dag=dag,
-)
+def create_scraping_task(dag, task_id, scraping_function_name, on_failure_callback=None, trigger_rule='all_success'):
+    def scraping_task_callable():
+        module = __import__('dags.tasks.tasks_raw', fromlist=[scraping_function_name])
+        scraping_function = getattr(module, scraping_function_name)
+        scraping_function()
+
+    return PythonOperator(
+        task_id=task_id,
+        python_callable=scraping_task_callable,
+        on_failure_callback=on_failure_callback,
+        trigger_rule=trigger_rule,
+        dag=dag
+    )
+
+with TaskGroup(group_id='scrapy_group', dag=dag) as scrapy_group:
+    # A tarefa da Amazon com callback em caso de falha
+    amazon_task = create_scraping_task(dag, 'amazon', 'run_amazon_scrapy_and_ingest', on_failure_callback=scrapy_failure_callback)
+    mercado_livre_task = create_scraping_task(dag, 'mercado_livre', 'run_mercado_livre_scrapy_and_ingest')
+    magalu_task = create_scraping_task(dag, 'magalu', 'run_magalu_scrapy_and_ingest')
+    americanas_task = create_scraping_task(dag, 'americanas', 'run_americanas_scrapy_and_ingest')
+    
+    amazon_task >> mercado_livre_task >> magalu_task >> americanas_task
+
+scrapy_group 
