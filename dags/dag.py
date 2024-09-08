@@ -14,7 +14,7 @@ default_args = {
     'email': ['your_email@example.com'],
     'email_on_failure': False,
     'email_on_retry': False,
-    'retries': 0,
+    'retries': 2,
     'retry_delay': timedelta(minutes=5),
 }
 
@@ -22,7 +22,7 @@ dag = DAG(
     'Scrape_Multiple_Sites',
     default_args=default_args,
     description='Uma DAG para fazer scraping de múltiplos sites e ingestão dos dados',
-    schedule_interval='@once',
+    schedule_interval='@once'
 )
 
 
