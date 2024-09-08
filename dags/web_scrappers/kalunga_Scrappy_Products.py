@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 from utils.utils import known_brands
 import re
 
@@ -68,8 +68,8 @@ def collect_data_from_kalunga_page(url, current_product):
                 'free_freight': free_freight,
                 'link': link,
                 'category': current_product,
-                'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                'updated_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'created_at': (datetime.now() - timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S'),
+                'updated_at': (datetime.now() - timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S'),
                 'website': 'Kalunga'
             })
         except Exception as e:

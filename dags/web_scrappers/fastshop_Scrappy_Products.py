@@ -7,7 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 from utils.utils import known_brands
 import os
 import random
@@ -94,8 +94,8 @@ def collect_data_from_fastshop(driver, url, current_product, known_brands):
                 'rating': round(random.uniform(3.5, 5.0), 1),
                 'free_freight': random.choice([True, False]),
                 'category': current_product,
-                'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                'updated_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'created_at': (datetime.now() - timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S'),
+                'updated_at': (datetime.now() - timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S'),
                 'website': 'FastShop'
             })
         except Exception as e:

@@ -86,7 +86,7 @@ def scrape_products_page(base_url, current_product, num_pages=1):
 def Mercado_Livre_Scrappy_Products():
     products = ["Notebook", "Smartphone", "TV", "Tablet", "Ipad", "Smartwatch"]  
     all_data = pd.DataFrame()
-    num_pages = 10  
+    num_pages = 8  
 
     for product in products:
         base_url = f"https://lista.mercadolivre.com.br/{product}"
