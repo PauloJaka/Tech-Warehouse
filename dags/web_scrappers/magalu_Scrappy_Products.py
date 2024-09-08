@@ -89,6 +89,7 @@ def scrape_magalu(gecko_path, base_url, product_type, num_pages=1, headless=True
         html_content = driver.page_source
         soup = BeautifulSoup(html_content, 'html.parser')
         products = extract_product_info(soup, product_type)
+        driver.delete_all_cookies()
         all_products.extend(products)
     
     driver.quit()
