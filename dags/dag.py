@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from airflow.operators.python_operator import PythonOperator
+from airflow.operators.python import PythonOperator
 from airflow.utils.task_group import TaskGroup
 
 
@@ -54,7 +54,7 @@ with TaskGroup(group_id='scrapy_group', dag=dag) as scrapy_group:
     fastshop_task = create_scraping_task(dag,'fastshop','run_fastshop_scrapy_and_ingest')
     kabum_task = create_scraping_task(dag,'kaBum', 'run_kabum_scrapy_and_ingest')
     
-    
+    # pyright: ignore [reportUnusedExpression]
     amazon_task >> mercado_livre_task >> magalu_task >> americanas_task >> casas_bahia_task >> kalunga_task >> fastshop_task >> kabum_task
 
 scrapy_group 
