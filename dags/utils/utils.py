@@ -1,4 +1,4 @@
-known_brands = [
+known_brands: list = [
     "ACER", "ASUS", "SAMSUNG", "Dell", "Positivo", "Lenovo", "VAIO",
     "HP", "Apple", "Multilaser", "Anvazise", "ASHATA", "Santino", "MSI",
     "Marca Fácil", "Microsoft", "AWOW", "Gateway", "Compaq", "DAUERHAFT",
