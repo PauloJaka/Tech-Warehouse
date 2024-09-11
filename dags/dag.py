@@ -27,7 +27,7 @@ dag = DAG(
 
 
 def scrapy_failure_callback(context):
-    print(f"Tarefa falhou: {context['task_instance'].task_id}")
+    print(f"Task error: {context['task_instance'].task_id}")
     # Adicione aqui qualquer outra lógica, como envio de e-mails, registro de logs, etc.
 
 def create_scraping_task(dag, task_id, scraping_function_name, on_failure_callback=None, trigger_rule='none_skipped'):
