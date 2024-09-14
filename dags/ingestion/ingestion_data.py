@@ -50,3 +50,47 @@ def update_existing_data(df: pd.DataFrame, existing_data: pd.DataFrame) -> pd.Da
             df.at[index, 'created_at'] = match.iloc[0]['created_at']
     
     return df
+
+def get_max_id(engine: Engine, table_name: str) -> int:
+    query = text(f"SELECT MAX(id) as max_id FROM lakehouse.{table_name}")
+    
+    with engine.connect() as conn:
+        result = conn.execute(query)
+        
+        if result:  
+            row = result.fetchone()
+            if row and row[0] is not None: 
+                return row[0]
+    
+    raise ValueError(f"Não foi possível obter o max_id da tabela {table_name}.")
+
+def insert_into_fact_bronze(engine: Engine):
+    max_id = get_max_id(engine, "f_bronze")
+    
+    query = text("""
+        INSERT INTO lakehouse.f_bronze (id, created_at, updated_at, website, category)
+        SELECT id, created_at, updated_at, website, category
+        FROM lakehouse.raw
+        WHERE id > :max_id
+    """)
+    
+    with engine.connect() as conn:
+        conn.execute(query, {'max_id': max_id})
+
+def insert_into_dimension(engine: Engine, dimension_table: str, categories: list) -> None:
+    max_id = get_max_id(engine, dimension_table)
+    categories_placeholder = ','.join([f":category_{i}" for i in range(len(categories))])
+    
+    query = text(f"""
+        INSERT INTO lakehouse.{dimension_table} (id, title, discount_price, original_price, brand, rating, link, free_freight)
+        SELECT id, title, discount_price, original_price, brand, rating, link, free_freight
+        FROM lakehouse.raw
+        WHERE id > :max_id AND category IN ({categories_placeholder})
+    """)
+
+    params = {'max_id': max_id}
+    for i, category in enumerate(categories):
+        params[f'category_{i}'] = category
+    
+    with engine.connect() as conn:
+        conn.execute(query, params)
