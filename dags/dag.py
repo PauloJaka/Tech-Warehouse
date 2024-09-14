@@ -5,6 +5,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from airflow.operators.python import PythonOperator
 from airflow.utils.task_group import TaskGroup
+from tasks.tasks_bronze import process_tables_bronze
 
 
 default_args = {
@@ -54,7 +55,17 @@ with TaskGroup(group_id='scrapy_group', dag=dag) as scrapy_group:
     fastshop_task = create_scraping_task(dag,'fastshop','run_fastshop_scrapy_and_ingest')
     kabum_task = create_scraping_task(dag,'kaBum', 'run_kabum_scrapy_and_ingest')
     
-    # pyright: ignore [reportUnusedExpression]
-    amazon_task >> mercado_livre_task >> magalu_task >> americanas_task >> casas_bahia_task >> kalunga_task >> fastshop_task >> kabum_task
+    amazon_task >> mercado_livre_task >> magalu_task >> americanas_task >> casas_bahia_task >> kalunga_task >> fastshop_task >> kabum_task # pyright: ignore [reportUnusedExpression]
 
-scrapy_group 
+scrapy_group # pyright: ignore [reportUnusedExpression]
+
+def run_process_tables_bronze():
+    process_tables_bronze()
+
+process_tables_bronze_task = PythonOperator(
+    task_id='process_tables_bronze',
+    python_callable=run_process_tables_bronze,
+    dag=dag
+)
+
+scrapy_group >> process_tables_bronze_task # pyright: ignore [reportUnusedExpression]
