@@ -16,9 +16,9 @@ create table lakehouse.d_silver_notebooks(
     rating NUMERIC(3, 2),
     link TEXT,
     free_freight BOOLEAN,
-    model varchar(30),
-    CPU varchar(20),
-    GPU varchar(20),
+    model varchar(40),
+    CPU varchar(40),
+    GPU varchar(40),
     RAM varchar(5),
     SSD varchar(6)
 );
