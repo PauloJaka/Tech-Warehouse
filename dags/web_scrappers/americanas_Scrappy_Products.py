@@ -37,7 +37,7 @@ def extract_product_info(driver, product_type, css_selector):
             title = title_element.text.strip() if title_element else "No title"
             
             link_element = item.find_element(By.CSS_SELECTOR, ".inStockCard__Link-sc-1ngt5zo-1")
-            link = "https://www.americanas.com.br" + link_element.get_attribute('href') if link_element else "No link"
+            link = link_element.get_attribute('href') if link_element else "No link"
             
             price_discount_element = item.find_element(By.CSS_SELECTOR, ".styles__PromotionalPrice-sc-yl2rbe-0")
             price_discount = price_discount_element.text.strip().replace('R$', '').strip() if price_discount_element else ""

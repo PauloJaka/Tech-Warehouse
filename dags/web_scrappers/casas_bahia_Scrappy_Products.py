@@ -39,7 +39,7 @@ def collect_data_from_casas_bahia(driver, url, current_product, known_brands):
                 title = title_element.text.strip() if title_element else ""
                 original_price = original_price_element.text.strip()[3:] if original_price_element else ""
                 discount_price = discount_price_element.text.strip()[3:] if discount_price_element else ""
-                link = "https://www.casasbahia.com.br" + link_element if link_element else ""
+                link = link_element if link_element else ""
 
                 brand = "Unknown"
                 for known_brand in known_brands:
