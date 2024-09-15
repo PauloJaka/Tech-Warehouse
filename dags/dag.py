@@ -6,6 +6,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from airflow.operators.python import PythonOperator
 from airflow.utils.task_group import TaskGroup
 from tasks.tasks_bronze import process_tables_bronze
+from tasks.tasks_silver import process_table_to_silver
 
 
 default_args = {
@@ -15,7 +16,7 @@ default_args = {
     'email': ['your_email@example.com'],
     'email_on_failure': False,
     'email_on_retry': False,
-    'retries': 2,
+    'retries': 0,
     'retry_delay': timedelta(minutes=5),
 }
 
@@ -69,3 +70,21 @@ process_tables_bronze_task = PythonOperator(
 )
 
 scrapy_group >> process_tables_bronze_task # pyright: ignore [reportUnusedExpression]
+
+
+dagTask = DAG(
+    'test_tasks_dag',
+    default_args=default_args,
+    description='DAG para testar a função tasks',
+    schedule_interval=None,  # Altere conforme necessário
+    catchup=False,
+)
+
+test_tasks_operator = PythonOperator(
+    task_id='run_silver_batch',
+    python_callable=process_table_to_silver,
+    dag=dagTask,
+)
+
+# Definir o fluxo de tarefas
+test_tasks_operator  # pyright: ignore [reportUnusedExpression]
