@@ -1,6 +1,6 @@
 import pandas as pd
 from sqlalchemy.engine import Engine
-from ingestion.ingestion_data import ingest_data_to_postgres, get_database_connection, get_existing_data, update_existing_data
+from ingestion.ingestion_raw_and_bronze import ingest_data_to_postgres, get_database_connection, get_existing_data, update_existing_data
 from dags.web_scrappers.amazon_Scrappy_Products import Amazon_Scrappy_Products
 from dags.web_scrappers.mercado_livre_Scrappy_Products import Mercado_Livre_Scrappy_Products
 from dags.web_scrappers.magalu_Scrappy_Products import Magalu_Scrappy_Products

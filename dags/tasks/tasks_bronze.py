@@ -1,4 +1,4 @@
-from ingestion.ingestion_data import insert_into_dimension, insert_into_fact_bronze, get_database_connection
+from ingestion.ingestion_raw_and_bronze import insert_into_dimension, insert_into_fact_bronze, get_database_connection
 
 def process_tables_bronze() -> None:
     engine = get_database_connection()
