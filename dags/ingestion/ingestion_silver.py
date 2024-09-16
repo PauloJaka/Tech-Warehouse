@@ -86,7 +86,7 @@ def apply_ner_to_title(df, nlp):
     return df
 
 
-def insert_data_into_silver(df, silver_table):
+def insert_data_into_silver_notebook(df, silver_table):
     engine = get_database_connection()
     max_id = get_max_id(engine, silver_table)
     

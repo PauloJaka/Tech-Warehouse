@@ -1,7 +1,7 @@
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from ingestion.ingestion_silver import move_data_bronze_to_silver, load_ner_model, insert_data_into_silver, get_data_from_dimension, apply_ner_to_title
+from ingestion.ingestion_silver import move_data_bronze_to_silver, load_ner_model, insert_data_into_silver_notebook, get_data_from_dimension, apply_ner_to_title
 
 def process_table_to_silver():
     # Passo 1: Mover dados da tabela bronze para a tabela silver
@@ -20,4 +20,4 @@ def process_table_to_silver():
     df = apply_ner_to_title(df, nlp)
     print(df)
     # Passo 5: Inserir dados processados na tabela silver
-    insert_data_into_silver(df, dimension_table_for_insert)
+    insert_data_into_silver_notebook(df, dimension_table_for_insert)
