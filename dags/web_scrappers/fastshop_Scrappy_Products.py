@@ -74,7 +74,7 @@ def collect_data_from_fastshop(driver, url, current_product, known_brands):
             title = title_element['title'].strip() if title_element else ""
             original_price = original_price_element.text.strip()[3:] if original_price_element else ""
             discount_price = discount_price_element.text.strip()[3:] if discount_price_element else ""
-            link = "https://www.fastshop.com.br" + link_element['href'] if link_element else ""
+            link = "https://site.fastshop.com.br" + link_element['href'] if link_element else ""
 
             brand = "Unknown"
             for known_brand in known_brands:
