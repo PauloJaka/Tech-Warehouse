@@ -1,6 +1,3 @@
-import re 
-import pandas as pd
-
 known_brands: list = [
     "ACER", "ASUS", "SAMSUNG", "Dell", "Positivo", "Lenovo", "VAIO",
     "HP", "Apple", "Multilaser", "Anvazise", "ASHATA", "Santino", "MSI",
@@ -24,17 +21,4 @@ known_brands: list = [
     "Britânia", "Roku", "Dolby", "Philips", "Semp"
 ]
 
-def normalize_storage(value):
-    if pd.isna(value):
-        return value
-    numbers = re.findall(r'\d+', str(value))
-    if numbers:
-        number = int(numbers[0])
-        if number == 1:
-            return f"{number}TB"
-        else:
-            return f"{number}GB"
-    return value
 
-def notebook_normalization(row):
-    return sum(pd.isna(row[col]) or row[col] == '' for col in ['model', 'CPU', 'RAM', 'SSD'])
