@@ -34,7 +34,8 @@ create table lakehouse.d_silver_smartphone (
     model varchar(30),
     dual_sim bool,
     RAM varchar(5),
-    storage_capacity varchar(6)
+    storage_capacity varchar(6),
+    free_freight BOOLEAN
 )
 
 create table lakehouse.d_silver_tv (
@@ -48,7 +49,8 @@ create table lakehouse.d_silver_tv (
     model varchar(30),
 	size varchar(4),
 	resolution varchar(25),
-	technology varchar(15)
+	technology varchar(15),
+    free_freight BOOLEAN
 );
 
 create table lakehouse.d_silver_tablets(
@@ -61,7 +63,8 @@ create table lakehouse.d_silver_tablets(
     link TEXT,
     model varchar(30),
 	RAM varchar(5),
-    storage_capacity varchar(6)
+    storage_capacity varchar(6),
+    free_freight BOOLEAN
 );
 
 create table lakehouse.d_silver_smartwatch(
@@ -72,7 +75,8 @@ create table lakehouse.d_silver_smartwatch(
     brand varchar(20),
     rating NUMERIC(3, 2),
     link TEXT,
-    model varchar(30)
+    model varchar(30),
+    free_freight BOOLEAN
 );
 
 ALTER TABLE lakehouse.d_silver_tv 
