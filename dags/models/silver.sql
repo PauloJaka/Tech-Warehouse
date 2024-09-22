@@ -47,7 +47,7 @@ create table lakehouse.d_silver_tv (
     link TEXT,
     model varchar(30),
 	size varchar(4),
-	resolution varchar(15),
+	resolution varchar(25),
 	technology varchar(15)
 );
 
