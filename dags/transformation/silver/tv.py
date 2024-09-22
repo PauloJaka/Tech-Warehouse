@@ -23,8 +23,6 @@ def apply_ner_to_tv_title(df, nlp) -> pd.DataFrame:
     def remove_invalid_size(df):
         df['size'] = df['size'].apply(lambda x: str(x) if str(x).isdigit() and len(str(x)) <= 4 else None)
         return df
-
-    
     
     new_entities = []
     for title in df['title']:
