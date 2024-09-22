@@ -14,6 +14,18 @@ def get_data_from_dimension(dimension_table: str):
         print(f"Número de registros extraídos: {len(df)}")
     return df
 
+def filter_for_max_id(df: pd.DataFrame , insert_table: str) -> pd.DataFrame | None:
+    engine = get_database_connection()
+    max_id = get_max_id(engine, insert_table)
+    
+    df_filtered = df[df['id'] > max_id]
+    
+    if df_filtered.empty:
+        print(f"Nenhum dado novo para inserir na tabela {insert_table}.")
+        return 
+    
+    df = df_filtered
+    return df
 
 def move_data_bronze_to_silver() -> None:
     engine = get_database_connection()
@@ -36,17 +48,9 @@ def move_data_bronze_to_silver() -> None:
 def insert_data_into_silver_notebook(df) -> None:
     engine = get_database_connection()
     silver_notebook = 'd_silver_notebooks'
-    max_id = get_max_id(engine, silver_notebook)
-
-    
-    df_filtered = df[df['id'] > max_id]
-
-    if df_filtered.empty:
-        print(f"Nenhum dado novo para inserir na tabela {silver_notebook}.")
-        return
     
     with engine.connect() as conn:
-        for _, row in df_filtered.iterrows():
+        for _, row in df.iterrows():
             query = text(f"""
             INSERT INTO lakehouse.{silver_notebook} (
                 id, title, discount_price, original_price, brand, rating, link, free_freight,
@@ -79,16 +83,9 @@ def insert_data_into_silver_notebook(df) -> None:
 def insert_data_into_silver_tv(df: pd.DataFrame) -> None:
     engine = get_database_connection()
     silver_tv = 'd_silver_tv'
-    max_id = get_max_id(engine, silver_tv)
-    
-    df_filtered = df[df['id'] > max_id]
 
-    if df_filtered.empty:
-        print(f"Nenhum dado novo para inserir na tabela {silver_tv}.")
-        return
-    
     with engine.connect() as conn:
-        for _, row in df_filtered.iterrows():
+        for _, row in df.iterrows():
             query = text(f"""
             INSERT INTO lakehouse.{silver_tv} (
                 id, title, discount_price, original_price, brand, rating, link, free_freight,
@@ -116,3 +113,70 @@ def insert_data_into_silver_tv(df: pd.DataFrame) -> None:
             } 
             conn.execute(query, params)
     print(f"Dados novos inseridos na tabela {silver_tv} com sucesso.")
+
+
+def insert_data_into_silver_smartwatch(df: pd.DataFrame) -> None:
+    engine = get_database_connection()
+    silver_smartwach = 'd_silver_smartwatch'
+    
+    with engine.connect() as conn:
+        for _, row in df.iterrows():
+            query = text(f"""
+            INSERT INTO lakehouse.{silver_smartwach} (
+                id, title, discount_price, original_price, brand, rating, link, free_freight,
+                model
+            ) VALUES (
+                :id, :title, :discount_price, :original_price, :brand, :rating, :link, :free_freight,
+                :model
+            )
+            ON CONFLICT (id) DO NOTHING 
+            """)
+
+            params = {
+                'id': row['id'],
+                'title': row['title'],
+                'discount_price': row['discount_price'],
+                'original_price': row['original_price'],
+                'brand': row['brand'],
+                'rating': row['rating'],
+                'link': row['link'],
+                'free_freight': row['free_freight'],
+                'model': row['model']
+            } 
+            conn.execute(query, params)
+    print(f"Dados novos inseridos na tabela {silver_smartwach} com sucesso.")
+    
+    
+def insert_data_into_silver_tablets(df: pd.DataFrame) -> None:
+    engine = get_database_connection()
+    silver_tablets = 'd_silver_tablets'
+
+
+    with engine.connect() as conn:
+        for _, row in df.iterrows():
+            query = text(f"""
+            INSERT INTO lakehouse.{silver_tablets} (
+                id, title, discount_price, original_price, brand, rating, link, free_freight,
+                model, RAM, storage_capacity
+            ) VALUES (
+                :id, :title, :discount_price, :original_price, :brand, :rating, :link, :free_freight,
+                :model, :RAM, :storage_capacity
+            )
+            ON CONFLICT (id) DO NOTHING 
+            """)
+
+            params = {
+                'id': row['id'],
+                'title': row['title'],
+                'discount_price': row['discount_price'],
+                'original_price': row['original_price'],
+                'brand': row['brand'],
+                'rating': row['rating'],
+                'link': row['link'],
+                'free_freight': row['free_freight'],
+                'model': row['model'],
+                'RAM': row['RAM'],
+                'storage_capacity': row['storage_capacity']
+            } 
+            conn.execute(query, params)
+    print(f"Dados novos inseridos na tabela {silver_tablets} com sucesso.")
