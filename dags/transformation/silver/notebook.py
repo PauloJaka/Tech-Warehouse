@@ -22,7 +22,7 @@ def load_ner_model(model_path):
     return spacy.load(model_path)
 
 
-def apply_ner_to_notebook_title(df: pd.DataFrame, nlp) -> pd.DataFrame:
+def apply_ner_to_notebook_title(df, nlp) -> pd.DataFrame:
     def entities_to_dataframe(text, doc):
         entities = {
             'model': '',
