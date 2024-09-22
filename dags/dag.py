@@ -6,7 +6,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from airflow.operators.python import PythonOperator
 from airflow.utils.task_group import TaskGroup
 from tasks.tasks_bronze import process_tables_bronze
-#from tasks.tasks_silver import process_table_to_silver
+from tasks.tasks_silver import process_table_to_silver, process_table_to_silver_notebooks, process_table_to_silver_tv
 
 
 default_args = {
@@ -16,7 +16,7 @@ default_args = {
     'email': ['your_email@example.com'],
     'email_on_failure': False,
     'email_on_retry': False,
-    'retries': 2,
+    'retries': 0,
     'retry_delay': timedelta(minutes=5),
 }
 
@@ -57,7 +57,7 @@ with TaskGroup(group_id='scrapy_group', dag=dag) as scrapy_group:
     kabum_task = create_scraping_task(dag,'kaBum', 'run_kabum_scrapy_and_ingest')
     
     amazon_task >> mercado_livre_task >> magalu_task >> americanas_task >> casas_bahia_task >> kalunga_task >> fastshop_task >> kabum_task # pyright: ignore [reportUnusedExpression]
-
+    
 scrapy_group # pyright: ignore [reportUnusedExpression]
 
 def run_process_tables_bronze():
@@ -72,19 +72,38 @@ process_tables_bronze_task = PythonOperator(
 scrapy_group >> process_tables_bronze_task # pyright: ignore [reportUnusedExpression]
 
 
-#dagTask = DAG(
-#    'test_tasks_dag',
-#    default_args=default_args,
-#    description='DAG para testar a função tasks',
-#    schedule_interval=None,  # Altere conforme necessário
-#    catchup=False,
-#)
-#
-#test_tasks_operator = PythonOperator(
-#    task_id='run_silver_batch',
+dagTask = DAG(
+    'test_tasks_dag',
+    default_args=default_args,
+    description='DAG para testar a função tasks',
+    schedule_interval=None,  # Altere conforme necessário
+    catchup=False,
+)
+
+#silver_fact = PythonOperator(
+#    task_id='run_silver_fact',
 #    python_callable=process_table_to_silver,
 #    dag=dagTask,
 #)
 #
+#silver_notebooks = PythonOperator(
+#    task_id='run_silver_notebook',
+#    python_callable=process_table_to_silver_notebooks,
+#    dag=dagTask,
+#)
+silver_tv = PythonOperator(
+    task_id='run_silver_tv',
+    python_callable=process_table_to_silver_tv,
+    dag=dagTask,
+)
+process_to_silver = PythonOperator(
+    task_id='run_silver',
+    python_callable=process_table_to_silver,
+    dag=dagTask,
+)
+#
+
+process_to_silver >> silver_tv
+#
 ## Definir o fluxo de tarefas
-#test_tasks_operator  # pyright: ignore [reportUnusedExpression]
+#silver_fact >>  silver_notebooks # pyright: ignore [reportUnusedExpression]
