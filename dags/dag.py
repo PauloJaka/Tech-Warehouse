@@ -6,7 +6,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from airflow.operators.python import PythonOperator
 from airflow.utils.task_group import TaskGroup
 from tasks.tasks_bronze import process_tables_bronze
-from tasks.tasks_silver import process_table_to_silver, process_table_to_silver_notebooks, process_table_to_silver_tv, process_table_to_silver_smartwatch, process_table_to_silver_tablets
+from tasks.tasks_silver import process_table_to_silver, process_table_to_silver_notebooks, process_table_to_silver_tv, process_table_to_silver_smartwatch, process_table_to_silver_tablets, process_table_to_silver_smartphone
 
 
 default_args = {
@@ -79,11 +79,11 @@ dagTask = DAG(
     catchup=False,
 )
 
-silver_fact = PythonOperator(
-    task_id='run_silver_fact',
-    python_callable=process_table_to_silver,
-    dag=dagTask,
-)
+#silver_fact = PythonOperator(
+#    task_id='run_silver_fact',
+#    python_callable=process_table_to_silver,
+#    dag=dagTask,
+#)
 #
 #silver_notebooks = PythonOperator(
 #    task_id='run_silver_notebook',
@@ -107,10 +107,17 @@ silver_fact = PythonOperator(
 #    dag=dagTask,
 #)
 #
-silver_tablets = PythonOperator(
-    task_id='run_silver_tablets',
-    python_callable=process_table_to_silver_tablets,
+#silver_tablets = PythonOperator(
+#    task_id='run_silver_tablets',
+#    python_callable=process_table_to_silver_tablets,
+#    dag=dagTask,
+#)
+silver_smartphones = PythonOperator(
+    task_id='run_silver_smartphone',
+    python_callable=process_table_to_silver_smartphone,
     dag=dagTask,
 )
 
-silver_fact >>  silver_tablets # pyright: ignore [reportUnusedExpression]
+
+
+silver_smartphones # pyright: ignore [reportUnusedExpression]
