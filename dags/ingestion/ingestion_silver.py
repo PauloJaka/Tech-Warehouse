@@ -3,7 +3,7 @@ from sqlalchemy import text
 import pandas as pd
 from .ingestion_raw_and_bronze import get_database_connection, get_max_id
 
-def get_data_from_dimension(dimension_table: str):
+def get_data_from_dimension(dimension_table: str) -> pd.DataFrame:
     engine = get_database_connection()
     query = f"""
     SELECT id, title, discount_price, original_price, brand, rating, link, free_freight
@@ -22,7 +22,7 @@ def filter_for_max_id(df: pd.DataFrame , insert_table: str) -> pd.DataFrame | No
     
     if df_filtered.empty:
         print(f"Nenhum dado novo para inserir na tabela {insert_table}.")
-        return 
+        raise
     
     df = df_filtered
     return df
@@ -45,7 +45,7 @@ def move_data_bronze_to_silver() -> None:
         print(f"Dados movidos da tabela bronze para silver com sucesso! Ingestão em: {ingestion_at}")
 
 
-def insert_data_into_silver_notebook(df) -> None:
+def insert_data_into_silver_notebook(df: pd.DataFrame) -> None:
     engine = get_database_connection()
     silver_notebook = 'd_silver_notebooks'
     
@@ -180,3 +180,36 @@ def insert_data_into_silver_tablets(df: pd.DataFrame) -> None:
             } 
             conn.execute(query, params)
     print(f"Dados novos inseridos na tabela {silver_tablets} com sucesso.")
+    
+def insert_data_into_silver_smartphone(df: pd.DataFrame) -> None:
+    engine = get_database_connection()
+    silver_smartphone = 'd_silver_smartphone'
+
+    with engine.connect() as conn:
+        for _, row in df.iterrows():
+            query = text(f"""
+            INSERT INTO lakehouse.{silver_smartphone} (
+                id, title, discount_price, original_price, brand, rating, link, free_freight,
+                model, RAM, storage_capacity
+            ) VALUES (
+                :id, :title, :discount_price, :original_price, :brand, :rating, :link, :free_freight,
+                :model, :RAM, :storage_capacity
+            )
+            ON CONFLICT (id) DO NOTHING 
+            """)
+
+            params = {
+                'id': row['id'],
+                'title': row['title'],
+                'discount_price': row['discount_price'],
+                'original_price': row['original_price'],
+                'brand': row['brand'],
+                'rating': row['rating'],
+                'link': row['link'],
+                'free_freight': row['free_freight'],
+                'model': row['model'],
+                'RAM': row['RAM'],
+                'storage_capacity': row['storage_capacity']
+            } 
+            conn.execute(query, params)
+    print(f"Dados novos inseridos na tabela {silver_smartphone} com sucesso.")
