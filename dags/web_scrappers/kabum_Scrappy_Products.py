@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 import os
 from utils.utils import known_brands
 import concurrent.futures
+import re
 
 def initialize_driver(gecko_path, headless=True):
     print("Iniciando o driver...")
@@ -24,6 +25,22 @@ def collect_data_from_page(driver, product_type):
     product_elements = driver.find_elements(By.CSS_SELECTOR, "article.productCard")
     print(f"Found {len(product_elements)} product elements on the page")
     
+    def clean_price(price_text):
+        cleaned_price = re.sub(r'[^\d,]', '', price_text)
+        cleaned_price = cleaned_price.replace('.', '')
+        cleaned_price = cleaned_price.replace(',', '.')
+        return cleaned_price if cleaned_price else None
+    
+    def validate_price(price):
+        try:
+            if price is not None:
+                price = float(price)
+                if abs(price) >= 100000:
+                    return None  
+            return price
+        except ValueError:
+            return None 
+
     for index, item in enumerate(product_elements):
         try:
             name_element = item.find_element(By.CSS_SELECTOR, "span.nameCard")
@@ -48,12 +65,12 @@ def collect_data_from_page(driver, product_type):
                 if known_brand.lower() in name.lower():
                     brand = known_brand
                     break
-                
-            original_price = original_price_element.text.strip()[3:] if original_price_element else ""
-            discount_price = discount_price_element.text.strip()[3:] if discount_price_element else ""
-                
-            discount_price = discount_price.replace('.', '').replace(',', '.') if discount_price else None
-            original_price = original_price.replace('.', '').replace(',', '.') if original_price else None
+                                
+            original_price = clean_price(original_price_element.text.strip()) if original_price_element else None
+            discount_price = clean_price(discount_price_element.text.strip()) if discount_price_element else None
+            
+            original_price = validate_price(original_price)
+            discount_price = validate_price(discount_price)
 
             products.append({
                 'title': name,

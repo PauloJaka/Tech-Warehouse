@@ -16,7 +16,7 @@ default_args = {
     'email': ['your_email@example.com'],
     'email_on_failure': False,
     'email_on_retry': False,
-    'retries': 0,
+    'retries': 2,
     'retry_delay': timedelta(minutes=5),
 }
 
@@ -56,6 +56,7 @@ with TaskGroup(group_id='scrapy_group', dag=dag) as scrapy_group:
     fastshop_task = create_scraping_task(dag,'fastshop','run_fastshop_scrapy_and_ingest')
     kabum_task = create_scraping_task(dag,'kaBum', 'run_kabum_scrapy_and_ingest')
     
+
     amazon_task >> mercado_livre_task >> magalu_task >> americanas_task >> casas_bahia_task >> kalunga_task >> fastshop_task >> kabum_task # pyright: ignore [reportUnusedExpression]
 scrapy_group # pyright: ignore [reportUnusedExpression]
 
