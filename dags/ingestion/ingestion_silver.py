@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from sqlalchemy import text
 import pandas as pd
 from .ingestion_raw_and_bronze import get_database_connection, get_max_id
+from airflow.exceptions import AirflowSkipException
 
 def get_data_from_dimension(dimension_table: str) -> pd.DataFrame:
     engine = get_database_connection()
@@ -14,18 +15,24 @@ def get_data_from_dimension(dimension_table: str) -> pd.DataFrame:
         print(f"Número de registros extraídos: {len(df)}")
     return df
 
-def filter_for_max_id(df: pd.DataFrame , insert_table: str) -> pd.DataFrame | None:
+def get_new_data_for_silver(bronze_table_data: str, insert_table:str) -> pd.DataFrame | None:
     engine = get_database_connection()
-    max_id = get_max_id(engine, insert_table)
+    max_id_insert = get_max_id(engine, insert_table)
     
-    df_filtered = df[df['id'] > max_id]
+    query = f"""
+    SELECT id, title, discount_price, original_price, brand, rating, link, free_freight
+    FROM lakehouse.{bronze_table_data}
+    WHERE id > {max_id_insert} 
+    """
     
-    if df_filtered.empty:
-        print(f"Nenhum dado novo para inserir na tabela {insert_table}.")
-        return
-    
-    df = df_filtered
+    with engine.connect() as conn:
+        df = pd.read_sql(query, conn) 
+        print(f"Número de registros extraídos: {len(df)}")
+        
+        if df.empty:
+            raise AirflowSkipException(f"Nenhum dado novo para inserir na tabela {insert_table}.")
     return df
+    
 
 def move_data_bronze_to_silver() -> None:
     engine = get_database_connection()
