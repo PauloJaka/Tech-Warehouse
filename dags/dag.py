@@ -6,7 +6,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from airflow.operators.python import PythonOperator
 from airflow.utils.task_group import TaskGroup
 from tasks.tasks_bronze import process_tables_bronze
-from tasks.tasks_silver import process_table_to_silver, process_table_to_silver_notebooks, process_table_to_silver_tv, process_table_to_silver_smartwatch, process_table_to_silver_tablets, process_table_to_silver_smartphone
 
 
 default_args = {
@@ -17,7 +16,7 @@ default_args = {
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 2,
-    'retry_delay': timedelta(minutes=5),
+    'retry_delay': timedelta(minutes=2),
 }
 
 dag = DAG(
@@ -60,65 +59,38 @@ with TaskGroup(group_id='scrapy_group', dag=dag) as scrapy_group:
     amazon_task >> mercado_livre_task >> magalu_task >> americanas_task >> casas_bahia_task >> kalunga_task >> fastshop_task >> kabum_task # pyright: ignore [reportUnusedExpression]
 scrapy_group # pyright: ignore [reportUnusedExpression]
 
-def run_process_tables_bronze():
-    process_tables_bronze()
-
 process_tables_bronze_task = PythonOperator(
     task_id='process_tables_bronze',
-    python_callable=run_process_tables_bronze,
+    python_callable=process_tables_bronze,
     dag=dag
 )
 
-scrapy_group >> process_tables_bronze_task # pyright: ignore [reportUnusedExpression]
+def create_silver_insert_batch(dag, task_id, silver_table_insert_function, on_failure_callback=None, trigger_rule='none_skipped'):
+    def scraping_task_callable():
+        module = __import__('dags.tasks.tasks_silver', fromlist=[silver_table_insert_function])
+        scraping_function = getattr(module, silver_table_insert_function)
+        scraping_function()
 
+    return PythonOperator(
+        task_id=task_id,
+        python_callable=scraping_task_callable,
+        on_failure_callback=on_failure_callback,
+        trigger_rule=trigger_rule,
+        dag=dag
+    )
 
-dagTask = DAG(
-    'test_tasks_dag',
-    default_args=default_args,
-    description='DAG para testar a função tasks',
-    schedule_interval=None,  # Altere conforme necessário
-    catchup=False,
-)
+with TaskGroup(group_id='silver_insert_group', dag=dag) as silver_insert_group:
+    silver_fact_table = create_silver_insert_batch(dag, 'silver_fact', 'process_table_to_silver')
+    silver_notebook = create_silver_insert_batch(dag, 'notebook_dimension', 'process_table_to_silver_notebooks')
+    silver_tv = create_silver_insert_batch(dag, 'tv_dimension', 'process_table_to_silver_tv')
+    silver_smartwach = create_silver_insert_batch(dag, 'smartwatch_dimension', 'process_table_to_silver_smartwatch')
+    silver_tablet = create_silver_insert_batch(dag, 'tablet_dimension', 'process_table_to_silver_tablets')
+    silver_smartphone = create_silver_insert_batch(dag, 'smartphone_dimension', 'process_table_to_silver_smartphone')
 
-#silver_fact = PythonOperator(
-#    task_id='run_silver_fact',
-#    python_callable=process_table_to_silver,
-#    dag=dagTask,
-#)
-#
-#silver_notebooks = PythonOperator(
-#    task_id='run_silver_notebook',
-#    python_callable=process_table_to_silver_notebooks,
-#    dag=dagTask,
-#)
-#silver_tv = PythonOperator(
-#    task_id='run_silver_tv',
-#    python_callable=process_table_to_silver_tv,
-#    dag=dagTask,
-#)
-#process_to_silver = PythonOperator(
-#    task_id='run_silver',
-#    python_callable=process_table_to_silver,
-#    dag=dagTask,
-#)
-
-#silver_smartwatch = PythonOperator(
-#    task_id='run_silver_smartwatch',
-#    python_callable=process_table_to_silver_smartwatch,
-#    dag=dagTask,
-#)
-#
-#silver_tablets = PythonOperator(
-#    task_id='run_silver_tablets',
-#    python_callable=process_table_to_silver_tablets,
-#    dag=dagTask,
-#)
-silver_smartphones = PythonOperator(
-    task_id='run_silver_smartphone',
-    python_callable=process_table_to_silver_smartphone,
-    dag=dagTask,
-)
+    silver_fact_table >> silver_notebook >> silver_tv >> silver_smartwach >> silver_tablet >> silver_smartphone # pyright: ignore [reportUnusedExpression]
+silver_insert_group # pyright: ignore [reportUnusedExpression]
 
 
 
-silver_smartphones # pyright: ignore [reportUnusedExpression]
+scrapy_group >> process_tables_bronze_task >> silver_insert_group # pyright: ignore [reportUnusedExpression]
+
