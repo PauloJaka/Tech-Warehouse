@@ -22,7 +22,7 @@ def filter_for_max_id(df: pd.DataFrame , insert_table: str) -> pd.DataFrame | No
     
     if df_filtered.empty:
         print(f"Nenhum dado novo para inserir na tabela {insert_table}.")
-        raise
+        return
     
     df = df_filtered
     return df
