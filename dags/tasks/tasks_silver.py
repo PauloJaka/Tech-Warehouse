@@ -1,7 +1,3 @@
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from ingestion.ingestion_raw_and_bronze import get_database_connection
 from ingestion.ingestion_silver import move_data_bronze_to_silver, insert_data_into_silver_notebook, get_data_from_dimension, insert_data_into_silver_tv, insert_data_into_silver_smartwatch, insert_data_into_silver_tablets, get_max_id, filter_for_max_id, insert_data_into_silver_smartphone
 from dags.transformation.silver.notebook import  apply_ner_to_notebook_title, load_ner_model
 from dags.transformation.silver.tv import apply_ner_to_tv_title
