@@ -62,6 +62,6 @@ def apply_ner_to_notebook_title(df, nlp) -> pd.DataFrame:
     
     df = remove_invalid_ssd(df)
     df = remove_invalid_ram(df)
-    df = df[df.apply(notebook_normalization, axis=1) != 3]
+    df = df[(df.apply(notebook_normalization, axis=1) != 3) & (df['id'].notna()) & (df['id'] != '')]
     
     return df

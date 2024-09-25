@@ -18,5 +18,6 @@ def apply_ner_to_smartwatch_title(df, nlp) -> pd.DataFrame:
 
     df_entities = pd.DataFrame(new_entities)
     df = pd.concat([df, df_entities], axis=1)
+    df = df[(df['id'].notna()) & (df['id'] != '')]
     print(len(df))
     return df

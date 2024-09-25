@@ -34,5 +34,6 @@ def apply_ner_to_tv_title(df, nlp) -> pd.DataFrame:
     print(df_entities)
     df = pd.concat([df, df_entities], axis=1)
     df = remove_invalid_size(df)
+    df = df[(df['id'].notna()) & (df['id'] != '')]
     print(len(df))
     return df

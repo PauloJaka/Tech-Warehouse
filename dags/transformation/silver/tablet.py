@@ -46,5 +46,6 @@ def apply_ner_to_tablets_title(df, nlp) -> pd.DataFrame:
     df = replace_invalid_storage_capacity(df)
     df = replace_invalid_ram(df)
     df = replace_invalid_model(df)
+    df = df[(df['id'].notna()) & (df['id'] != '')]
     print(len(df))
     return df
