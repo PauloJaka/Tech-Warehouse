@@ -65,7 +65,7 @@ process_tables_bronze_task = PythonOperator(
     dag=dag
 )
 
-def create_silver_insert_batch(dag, task_id, silver_table_insert_function, on_failure_callback=None, trigger_rule='none_skipped'):
+def create_silver_insert_batch(dag, task_id, silver_table_insert_function, on_failure_callback=None, trigger_rule='dummy'):
     def scraping_task_callable():
         module = __import__('dags.tasks.tasks_silver', fromlist=[silver_table_insert_function])
         scraping_function = getattr(module, silver_table_insert_function)
@@ -87,7 +87,7 @@ with TaskGroup(group_id='silver_insert_group', dag=dag) as silver_insert_group:
     silver_tablet = create_silver_insert_batch(dag, 'tablet_dimension', 'process_table_to_silver_tablets')
     silver_smartphone = create_silver_insert_batch(dag, 'smartphone_dimension', 'process_table_to_silver_smartphone')
 
-    silver_fact_table >> silver_notebook >> silver_tv >> silver_smartwach >> silver_tablet >> silver_smartphone # pyright: ignore [reportUnusedExpression]
+    silver_fact_table >>  silver_notebook >> silver_tv >> silver_smartwach >> silver_tablet >> silver_smartphone # pyright: ignore [reportUnusedExpression]
 silver_insert_group # pyright: ignore [reportUnusedExpression]
 
 
