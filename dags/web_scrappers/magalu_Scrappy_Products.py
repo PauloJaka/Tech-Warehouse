@@ -8,11 +8,9 @@ import time
 import os
 import pandas as pd
 from datetime import datetime, timedelta
-from utils.utils import known_brands
+from utils.utils import known_brands,MAX_THREADS
 from bs4 import BeautifulSoup
 import re
-from dotenv import load_dotenv
-load_dotenv()
 
 
 def initialize_driver(gecko_path, headless=True):
@@ -107,7 +105,7 @@ def Magalu_Scrappy_Products():
     
     gecko_path = os.getenv('Driver')
     products_list = ["Notebook", "Smartphone", "TV", "Tablet", "Ipad", "Smartwatch"]  
-    max_threads = int(os.getenv('MAX_THREADS', 1)) 
+    max_threads = MAX_THREADS
     
     all_data = []
 

@@ -22,3 +22,4 @@ known_brands: list = [
 ]
 
 
+MAX_THREADS: int = 3

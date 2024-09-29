@@ -6,11 +6,10 @@ import pandas as pd
 import time
 from datetime import datetime, timedelta
 import os
-from utils.utils import known_brands
+from utils.utils import known_brands,MAX_THREADS
 import concurrent.futures
 import re
-from dotenv import load_dotenv
-load_dotenv()
+
 
 def initialize_driver(gecko_path, headless=True):
     print("Iniciando o driver...")
@@ -126,7 +125,7 @@ def KaBum_Scrappy_Products():
 
     all_data = pd.DataFrame()
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=int(os.getenv('MAX_THREADS', 1))) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_THREADS) as executor:
         futures = [
             executor.submit(scrape_product_category, gecko_path, base_url, product_type, num_pages, headless=True)
             for product_type, base_url in category_urls.items()

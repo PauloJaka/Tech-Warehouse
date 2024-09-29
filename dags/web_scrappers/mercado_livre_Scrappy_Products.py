@@ -2,12 +2,10 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 from datetime import datetime, timedelta
-from utils.utils import known_brands
+from utils.utils import known_brands, MAX_THREADS
 import re
 from concurrent.futures import ThreadPoolExecutor
-from dotenv import load_dotenv
 import os
-load_dotenv()
 
 def collect_data_from_page(url, current_product, known_brands):
     headers = {
@@ -77,7 +75,7 @@ def collect_data_from_page(url, current_product, known_brands):
 def scrape_products_page(base_url, current_product, num_pages=1):
     all_products = []
     
-    with ThreadPoolExecutor(max_workers=int(os.getenv('MAX_THREADS', 1))) as executor:  
+    with ThreadPoolExecutor(max_workers=MAX_THREADS) as executor:  
         futures = []
         for page in range(1, num_pages + 1):
             url = f"{base_url}_Desde_{(page-1)*50 + 1}"

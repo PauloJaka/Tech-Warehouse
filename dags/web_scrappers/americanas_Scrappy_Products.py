@@ -9,10 +9,9 @@ import time
 import os
 import pandas as pd
 from datetime import datetime, timedelta
-from utils.utils import known_brands
+from utils.utils import known_brands, MAX_THREADS
 import random
-from dotenv import load_dotenv
-load_dotenv()
+
 
 def initialize_driver(gecko_path):
     options = Options()
@@ -106,7 +105,7 @@ def Americanas_Scrappy_Products():
     gecko_path = os.getenv('Driver')
     products_list = ["Notebook", "Smartphone", "TV", "Tablet", "Ipad", "Smartwatch"]
     num_pages = 8
-    max_threads = int(os.getenv('MAX_THREADS', 1))
+    max_threads = MAX_THREADS
     
     all_data = []
 

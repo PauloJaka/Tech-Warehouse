@@ -5,12 +5,11 @@ from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.firefox.options import Options
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
-from utils.utils import known_brands
+from utils.utils import known_brands, MAX_THREADS
 import os
 import random
 import time
-from dotenv import load_dotenv
-load_dotenv()
+
 
 def setup_selenium():
     options = Options()
@@ -102,7 +101,7 @@ def Casas_Bahia_Scrappy_Products():
         "Smartwatch": "https://www.casasbahia.com.br/Smartwatch/b"
     }
 
-    with ThreadPoolExecutor(max_workers=int(os.getenv('MAX_THREADS', 1))) as executor:
+    with ThreadPoolExecutor(max_workers=MAX_THREADS) as executor:
         futures = [executor.submit(scrape_casas_bahia, base_url, product, num_pages) for product, base_url in products_dict.items()]
         
         for future in as_completed(futures):
