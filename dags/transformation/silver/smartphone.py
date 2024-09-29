@@ -1,7 +1,20 @@
 import pandas as pd
+import re
 from .notebook import normalize_storage
 
-def apply_ner_to_smartphones_title(df, nlp) -> pd.DataFrame:
+def extract_ram(title):
+    match = re.search(r"(\d+)\s*GB\s*RAM", title, re.IGNORECASE)
+    if match:
+        return match.group(1) + " GB"
+    return None
+
+def extract_storage_capacity(title):
+    match = re.search(r"(\d+)\s*GB", title, re.IGNORECASE)
+    if match and int(match.group(1)) > 16:
+        return match.group(1) + " GB"
+    return None
+
+def apply_ner_to_smartphones_title(df, nlp, max_attempts=5) -> pd.DataFrame:
     def entities_to_dataframe(text, doc):
         entities = {
             'model': '',
@@ -19,13 +32,36 @@ def apply_ner_to_smartphones_title(df, nlp) -> pd.DataFrame:
 
         return entities
     
-    
     new_entities = []
     for title in df['title']:
-        doc = nlp(title)
-        entities = entities_to_dataframe(title, doc)
-        new_entities.append(entities)
+        entities = {
+            'model': '',
+            'RAM': '',
+            'storage_capacity': ''
+        }
+
+        attempts = 0
+        while attempts < max_attempts:
+            doc = nlp(title)
+            entities = entities_to_dataframe(title, doc)
+
+            if not entities['RAM']:
+                extracted_ram = extract_ram(title)
+                if extracted_ram:
+                    entities['RAM'] = extracted_ram
+            
+            if not entities['storage_capacity']:
+                extracted_storage = extract_storage_capacity(title)
+                if extracted_storage:
+                    entities['storage_capacity'] = extracted_storage
+            
+            if entities['model'] or entities['RAM'] or entities['storage_capacity']:
+                break
+
+            attempts += 1
         
+        new_entities.append(entities)
+
     def replace_invalid_storage_capacity(df):
         df['storage_capacity'] = df['storage_capacity'].apply(lambda x: x if len(str(x)) <= 6 else None)
         return df
