@@ -63,7 +63,6 @@ def get_max_id(engine: Engine, table_name: str) -> int:
                 return row[0]
     
     return 0
-    raise ValueError(f"Não foi possível obter o max_id da tabela {table_name}.")
 
 def insert_into_fact_bronze(engine: Engine):
     max_id = get_max_id(engine, "f_bronze")
