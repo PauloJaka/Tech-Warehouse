@@ -6,10 +6,12 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import time
+from dotenv import load_dotenv
 import os
 import pandas as pd
 from datetime import datetime, timedelta
 from utils.utils import known_brands
+load_dotenv()
 
 def create_driver(gecko_path):
     options = Options()
@@ -113,7 +115,7 @@ def Amazon_Scrappy_Products():
     
     gecko_path = os.getenv('Driver')
     products_list = ["Notebook", "Smartphone", "TV", "Tablet", "Ipad", "Smartwatch"] 
-    max_threads = 3
+    max_threads = int(os.getenv('MAX_THREADS', 1))
     
     all_data = []
     

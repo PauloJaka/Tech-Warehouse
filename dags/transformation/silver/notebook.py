@@ -14,9 +14,6 @@ def normalize_storage(value):
             return f"{number}GB"
     return value
 
-def notebook_normalization(row):
-    return sum(pd.isna(row[col]) or row[col] == '' for col in ['model', 'CPU', 'RAM', 'SSD'])
-
 
 def load_ner_model(model_path):
     return spacy.load(model_path)
@@ -44,10 +41,13 @@ def apply_ner_to_notebook_title(df, nlp) -> pd.DataFrame:
                 entities['SSD'] = ent.text
         return entities
     
-    def remove_invalid_ssd(df):
-        return df[df['SSD'].apply(lambda x: len(str(x)) <= 6)]
-    def remove_invalid_ram(df):
-        return df[df['RAM'].apply(lambda x: len(str(x)) <= 5)]
+    def remove_invalid(df):
+        df['SSD'] = df['SSD'].apply(lambda x: x if len(str(x)) <= 6 else None)
+        df['CPU'] = df['CPU'].apply(lambda x: x if len(str(x)) <= 40 else None)
+        df['RAM'] = df['RAM'].apply(lambda x: x if len(str(x)) <= 5 else None)
+        df['model'] = df['model'].apply(lambda x: x if len(str(x)) <= 40 else None)
+        df['GPU'] = df['GPU'].apply(lambda x: x if len(str(x)) <= 40 else None)
+        return df    
     
     new_entities = []
     for title in df['title']:
@@ -57,11 +57,7 @@ def apply_ner_to_notebook_title(df, nlp) -> pd.DataFrame:
 
     df_entities = pd.DataFrame(new_entities)
     df = pd.concat([df, df_entities], axis=1)
-    df['RAM'] = df['RAM'].apply(normalize_storage)
-    df['SSD'] = df['SSD'].apply(normalize_storage)
-    
-    df = remove_invalid_ssd(df)
-    df = remove_invalid_ram(df)
-    df = df[(df.apply(notebook_normalization, axis=1) != 3) & (df['id'].notna()) & (df['id'] != '')]
+    df = remove_invalid(df)
+    df = df[(df['id'].notna()) & (df['id'] != '')]
     
     return df

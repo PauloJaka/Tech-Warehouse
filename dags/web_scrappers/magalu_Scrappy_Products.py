@@ -11,6 +11,9 @@ from datetime import datetime, timedelta
 from utils.utils import known_brands
 from bs4 import BeautifulSoup
 import re
+from dotenv import load_dotenv
+load_dotenv()
+
 
 def initialize_driver(gecko_path, headless=True):
     print('driver')
@@ -104,7 +107,7 @@ def Magalu_Scrappy_Products():
     
     gecko_path = os.getenv('Driver')
     products_list = ["Notebook", "Smartphone", "TV", "Tablet", "Ipad", "Smartwatch"]  
-    max_threads = 3
+    max_threads = int(os.getenv('MAX_THREADS', 1)) 
     
     all_data = []
 

@@ -13,6 +13,8 @@ import os
 import random
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from dotenv import load_dotenv
+load_dotenv()
 
 
 def setup_selenium():
@@ -131,7 +133,7 @@ def FastShop_Scrappy_Products():
         
     }
 
-    with ThreadPoolExecutor(max_workers=2) as executor:
+    with ThreadPoolExecutor(max_workers=int(os.getenv('MAX_THREADS', 1))) as executor:
         future_to_product = {executor.submit(scrape_product, product, base_url): product for product, base_url in products_dict.items()}
         
         for future in as_completed(future_to_product):

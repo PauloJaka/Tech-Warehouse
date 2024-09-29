@@ -9,6 +9,8 @@ from utils.utils import known_brands
 import os
 import random
 import time
+from dotenv import load_dotenv
+load_dotenv()
 
 def setup_selenium():
     options = Options()
@@ -100,7 +102,7 @@ def Casas_Bahia_Scrappy_Products():
         "Smartwatch": "https://www.casasbahia.com.br/Smartwatch/b"
     }
 
-    with ThreadPoolExecutor(max_workers=2) as executor:
+    with ThreadPoolExecutor(max_workers=int(os.getenv('MAX_THREADS', 1))) as executor:
         futures = [executor.submit(scrape_casas_bahia, base_url, product, num_pages) for product, base_url in products_dict.items()]
         
         for future in as_completed(futures):
