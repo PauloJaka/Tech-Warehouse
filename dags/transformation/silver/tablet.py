@@ -1,5 +1,18 @@
 import pandas as pd
 from .notebook import normalize_storage
+import re
+
+def extract_ram(title):
+    match = re.search(r"(\d+)\s*GB\s*RAM", title, re.IGNORECASE)
+    if match:
+        return match.group(1) + " GB"
+    return None
+
+def extract_storage_capacity(title):
+    match = re.search(r"(\d+)\s*GB", title, re.IGNORECASE)
+    if match and int(match.group(1)) > 16:
+        return match.group(1) + " GB" 
+    return None
 
 def apply_ner_to_tablets_title(df, nlp) -> pd.DataFrame:
     def entities_to_dataframe(text, doc):
@@ -19,13 +32,30 @@ def apply_ner_to_tablets_title(df, nlp) -> pd.DataFrame:
 
         return entities
     
-    
     new_entities = []
+    
     for title in df['title']:
-        doc = nlp(title)
-        entities = entities_to_dataframe(title, doc)
-        new_entities.append(entities)
+        attempts = 0
+        entities = {}
         
+
+        while attempts < 5 and (len(entities) < 3):  
+            doc = nlp(title)
+            entities = entities_to_dataframe(title, doc)
+            attempts += 1
+
+        if 'RAM' not in entities or entities['RAM'] == '':
+            ram_regex = extract_ram(title)
+            if ram_regex:
+                entities['RAM'] = ram_regex
+        
+        if 'storage_capacity' not in entities or entities['storage_capacity'] == '':
+            storage_regex = extract_storage_capacity(title)
+            if storage_regex:
+                entities['storage_capacity'] = storage_regex
+
+        new_entities.append(entities)
+
     def replace_invalid_storage_capacity(df):
         df['storage_capacity'] = df['storage_capacity'].apply(lambda x: x if len(str(x)) <= 6 else None)
         return df
