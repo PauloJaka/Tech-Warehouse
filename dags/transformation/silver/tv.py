@@ -19,15 +19,25 @@ def apply_ner_to_tv_title(df, nlp) -> pd.DataFrame:
                 entities['technology'] = ent.text
         return entities
     
-    # Função para garantir que o tamanho seja numérico
     def remove_invalid_size(df):
         df['size'] = df['size'].apply(lambda x: str(x) if str(x).isdigit() and len(str(x)) <= 4 else None)
         return df
     
     new_entities = []
+    
     for title in df['title']:
-        doc = nlp(title)
-        entities = entities_to_dataframe(title, doc)
+        attempts = 0
+        entities = {}
+        
+        while attempts < 5 and (len(entities) < 3):  
+            doc = nlp(title)
+            entities = entities_to_dataframe(title, doc)
+            attempts += 1
+
+        if not entities['size']:
+            if entities['model']:
+                entities['size'] = entities['model'][:2]  
+
         new_entities.append(entities)
 
     df_entities = pd.DataFrame(new_entities)
