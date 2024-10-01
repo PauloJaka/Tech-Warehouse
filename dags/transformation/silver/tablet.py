@@ -1,6 +1,7 @@
 import pandas as pd
 from .notebook import normalize_storage
 import re
+from typing import Optional
 
 def extract_ram(title):
     match = re.search(r"(\d+)\s*GB\s*RAM", title, re.IGNORECASE)
@@ -36,7 +37,7 @@ def apply_ner_to_tablets_title(df, nlp) -> pd.DataFrame:
     
     for title in df['title']:
         attempts = 0
-        entities = {}
+        entities: dict[str, Optional[str]] = {}
         
 
         while attempts < 5 and (len(entities) < 3):  

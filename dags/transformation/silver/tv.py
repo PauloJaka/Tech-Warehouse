@@ -1,4 +1,5 @@
 import pandas as pd
+from typing import Optional
 
 def apply_ner_to_tv_title(df, nlp) -> pd.DataFrame:
     def entities_to_dataframe(text, doc):
@@ -27,7 +28,7 @@ def apply_ner_to_tv_title(df, nlp) -> pd.DataFrame:
     
     for title in df['title']:
         attempts = 0
-        entities = {}
+        entities: dict[str, Optional[str]] = {}
         
         while attempts < 5 and (len(entities) < 3):  
             doc = nlp(title)
