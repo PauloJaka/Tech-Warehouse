@@ -45,19 +45,19 @@ def create_scraping_task(dag, task_id, scraping_function_name, on_failure_callba
         dag=dag
     )
 
-with TaskGroup(group_id='scrapy_group', dag=dag) as scrapy_group:
-    amazon_task = create_scraping_task(dag, 'amazon', 'run_amazon_scrapy_and_ingest', on_failure_callback=scrapy_failure_callback)
-    mercado_livre_task = create_scraping_task(dag, 'mercado_livre', 'run_mercado_livre_scrapy_and_ingest')
-    magalu_task = create_scraping_task(dag, 'magalu', 'run_magalu_scrapy_and_ingest')
-    americanas_task = create_scraping_task(dag, 'americanas', 'run_americanas_scrapy_and_ingest')
-    casas_bahia_task = create_scraping_task(dag, 'casas_bahia', 'run_casas_bahia_scrapy_and_ingest')
-    kalunga_task = create_scraping_task(dag, 'kalunga', 'run_kalunga_scrapy_and_ingest')
-    fastshop_task = create_scraping_task(dag,'fastshop','run_fastshop_scrapy_and_ingest')
-    kabum_task = create_scraping_task(dag,'kaBum', 'run_kabum_scrapy_and_ingest')
+#with TaskGroup(group_id='scrapy_group', dag=dag) as scrapy_group:
+   # amazon_task = create_scraping_task(dag, 'amazon', 'run_amazon_scrapy_and_ingest', on_failure_callback=scrapy_failure_callback)
+   # mercado_livre_task = create_scraping_task(dag, 'mercado_livre', 'run_mercado_livre_scrapy_and_ingest')
+   # magalu_task = create_scraping_task(dag, 'magalu', 'run_magalu_scrapy_and_ingest')
+   # americanas_task = create_scraping_task(dag, 'americanas', 'run_americanas_scrapy_and_ingest')
+   # casas_bahia_task = create_scraping_task(dag, 'casas_bahia', 'run_casas_bahia_scrapy_and_ingest')
+   # kalunga_task = create_scraping_task(dag, 'kalunga', 'run_kalunga_scrapy_and_ingest')
+   # fastshop_task = create_scraping_task(dag,'fastshop','run_fastshop_scrapy_and_ingest')
+   # kabum_task = create_scraping_task(dag,'kaBum', 'run_kabum_scrapy_and_ingest')
     
-
-    amazon_task >> mercado_livre_task >> magalu_task >> americanas_task >> casas_bahia_task >> kalunga_task >> fastshop_task >> kabum_task # pyright: ignore [reportUnusedExpression]
-scrapy_group # pyright: ignore [reportUnusedExpression]
+   # magalu_task
+   # amazon_task >> mercado_livre_task >> magalu_task >> americanas_task >> casas_bahia_task >> kalunga_task >> fastshop_task >> kabum_task # pyright: ignore [reportUnusedExpression]
+#scrapy_group # pyright: ignore [reportUnusedExpression]
 
 process_tables_bronze_task = PythonOperator(
     task_id='process_tables_bronze',
@@ -92,5 +92,5 @@ silver_insert_group # pyright: ignore [reportUnusedExpression]
 
 
 
-scrapy_group >> process_tables_bronze_task >> silver_insert_group # pyright: ignore [reportUnusedExpression]
+process_tables_bronze_task >> silver_insert_group # pyright: ignore [reportUnusedExpression]
 

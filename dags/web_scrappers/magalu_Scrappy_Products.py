@@ -13,6 +13,23 @@ from bs4 import BeautifulSoup
 import re
 
 
+def clean_price(price_text):
+    cleaned_price = re.sub(r'[^\d,]', '', price_text)
+    cleaned_price = cleaned_price.replace('.', '')
+    cleaned_price = cleaned_price.replace(',', '.')
+    return cleaned_price if cleaned_price else None
+
+def validate_price(price):
+    try:
+        if price is not None:
+            price = float(price)
+            if abs(price) >= 100000:
+                return None  
+        return price
+    except ValueError:
+        return None 
+
+
 def initialize_driver(gecko_path, headless=True):
     print('driver')
     firefox_options = Options()
@@ -44,11 +61,9 @@ def extract_product_info(soup, product_type):
                     link = link_element['href'] if link_element else "Link não encontrado"
                     link = f"https://www.magazineluiza.com.br{link}"
                     
-                    price_original_element = item.select_one('p[data-testid="price-original"]')
-                    price_original = price_original_element.text.strip().replace('R$', '').strip() if price_original_element else ""
                     
+                    price_original_element = item.select_one('p[data-testid="price-original"]')
                     price_discount_element = item.select_one('p[data-testid="price-value"]')
-                    price_discount = price_discount_element.text.strip().replace('R$', '').strip() if price_discount_element else ""
                     
                     review_element = item.select_one('span[format="score-count"]')
                     review_text = review_element.text.strip() if review_element else ""
@@ -60,8 +75,11 @@ def extract_product_info(soup, product_type):
                         if known_brand.lower() in title.lower():
                             brand = known_brand
                             break
-                    discount_price = price_discount.replace('.', '').replace(',', '.') if price_discount else None
-                    original_price = price_original.replace('.', '').replace(',', '.') if price_original else None
+                        
+                    original_price = clean_price(price_original_element.text.strip()) if price_original_element else None
+                    discount_price = clean_price(price_discount_element.text.strip()) if price_discount_element else None
+                    original_price = validate_price(original_price)
+                    discount_price = validate_price(discount_price)
                     
                     products.append({
                         'title': title,
