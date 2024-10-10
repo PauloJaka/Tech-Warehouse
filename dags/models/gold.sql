@@ -22,7 +22,8 @@ create table lakehouse.d_gold_notebooks(
     GPU varchar(40),
     RAM varchar(5),
     SSD varchar(6),
-    specifics varchar(7)
+    specifics varchar(7),
+    cpu_category varchar(50)
 );
 
 create table lakehouse.d_gold_smartphone (
