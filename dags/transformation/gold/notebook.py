@@ -3,8 +3,11 @@ import re
 
 def classify_product_with_regex(row):
     discount_price = row['discount_price'] if pd.notna(row['discount_price']) else row['original_price']
-    intel_regex = r'\b(i[3579]|core\s*i[3579])[\s-]?\d+'
-    ryzen_regex = r'\b(ryzen\s*[3579]|r[3579])[\s-]?\d*'
+    
+    intel_high_regex = r'\b(i[579]|core\s*i[579])[\s-]?\d+'
+    ryzen_high_regex = r'\b(ryzen\s*[579]|r[579])[\s-]?\d*'
+    intel_low_regex = r'\b(i3|core\s*i3)[\s-]?\d+'
+    ryzen_low_regex = r'\b(ryzen\s*3|r3)[\s-]?\d*'
     celeron_regex = r'\b(celeron|pentium|atom)'
     other_basic_regex = r'\b(dual\s*core|quad\s*core|amd\s*a[4-6]|amd\s*athlon)'
 
@@ -12,7 +15,8 @@ def classify_product_with_regex(row):
         return 'Gamer'
     
     cpu_str = str(row['CPU']).lower()
-    if (re.search(intel_regex, cpu_str) or re.search(ryzen_regex, cpu_str)):
+
+    if re.search(intel_high_regex, cpu_str) or re.search(ryzen_high_regex, cpu_str):
         ram_value_str = str(row['RAM'])  
         ssd_value_str = str(row['SSD'])  
 
@@ -25,12 +29,12 @@ def classify_product_with_regex(row):
 
             if ram_value > 8 and ssd_value >= 256:
                 return 'Gamer'
-    
-    if discount_price < 2500 and '8GB' in str(row['RAM']):
-        return 'Estudos'
-    
-    if discount_price < 3000 and '8GB' in str(row['ram']):
-        if re.search(intel_regex, cpu_str) or re.search(ryzen_regex, cpu_str) or re.search(celeron_regex, cpu_str) or re.search(other_basic_regex, cpu_str):
+
+    if discount_price < 3000 and '8GB' in str(row['RAM']):
+        if (re.search(intel_low_regex, cpu_str) or 
+            re.search(ryzen_low_regex, cpu_str) or 
+            re.search(celeron_regex, cpu_str) or 
+            re.search(other_basic_regex, cpu_str)):
             return 'Casual'
     
     if 'Macbook' in str(row['titulo']):
@@ -56,6 +60,9 @@ def categorize_cpu(row):
     else:
         return 'Unknown CPU'
 
-def aply_specifics_categorys_on_notebook(df: pd.DataFrame):
-    df['specifics'] = df.apply(classify_product_with_regex, axis=1)
-    df['cpu_category'] = df.apply(categorize_cpu, axis=1)
+def apply_specifics_categorys_on_notebook(df: pd.DataFrame) -> pd.DataFrame:
+    if df is not None:
+        df['specifics'] = df.apply(classify_product_with_regex, axis=1)
+        df['cpu_category'] = df.apply(categorize_cpu, axis=1)
+    
+    return df
