@@ -3,7 +3,6 @@ from ingestion.ingestion_raw_and_bronze import insert_into_dimension, insert_int
 def process_tables_bronze() -> None:
     engine = get_database_connection()
     
-    # Define as tabelas e categorias
     dimension_tables: dict[str, list[str]] = {
         "d_bronze_smartphone": ["Smartphone"],
         "d_bronze_tablets": ["Tablet", "Ipad"],
