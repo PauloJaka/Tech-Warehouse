@@ -21,13 +21,13 @@ def move_data_silver_to_gold() -> None:
         conn.execute(query, {"ingestion_at": ingestion_at, "max_id_gold": max_id_gold})
         print(f"Dados movidos da tabela silver para gold com sucesso! Ingestão em: {ingestion_at}")
 
-def get_new_data_for_gold(silver_table_data: str, insert_table:str) -> pd.DataFrame:
+def get_new_data_for_gold(silver_table_data: str, insert_table:str, additional_query: str) -> pd.DataFrame:
     engine = get_database_connection()
     max_id_insert = get_max_id(engine, insert_table)
     
     query = f"""
     SELECT * FROM lakehouse.{silver_table_data}
-    WHERE id > {max_id_insert} 
+    WHERE id > {max_id_insert} AND {additional_query}
     """
     
     with engine.connect() as conn:
