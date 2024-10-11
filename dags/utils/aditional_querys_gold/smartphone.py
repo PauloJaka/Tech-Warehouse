@@ -1,0 +1,10 @@
+smartphone_query = """title NOT LIKE '%cordao%'
+  AND title NOT LIKE '%Cordão%'
+  AND title NOT LIKE '%cordão%'
+  AND title NOT LIKE '%Suporte%'
+    AND title NOT LIKE '%Cabo%'
+    AND title NOT LIKE '%cabo%'
+        AND title NOT LIKE '%idoso%'
+            AND title NOT LIKE '%Idoso%'
+                AND title NOT LIKE '%vovo%'
+     AND title NOT LIKE '%Capa%';"""
