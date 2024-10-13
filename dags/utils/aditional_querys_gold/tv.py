@@ -1,1 +1,1 @@
-tv_query ="""dst."size" is not null"""
+tv_query=f""" "size" is not null AND title NOT ILIKE '%Suporte%' and link not ilike '%no link%'"""
