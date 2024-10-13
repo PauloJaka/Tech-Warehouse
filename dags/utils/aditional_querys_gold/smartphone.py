@@ -1,4 +1,4 @@
-smartphone_query = """title NOT LIKE '%cordao%'
+smartphone_query = f"""title NOT LIKE '%cordao%'
   AND title NOT LIKE '%Cordão%'
   AND title NOT LIKE '%cordão%'
   AND title NOT LIKE '%Suporte%'

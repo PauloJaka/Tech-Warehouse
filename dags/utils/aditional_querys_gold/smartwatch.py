@@ -1,1 +1,1 @@
-smartwatch_query="""title not ilike '%Pulseira%' and title not ilike '%Not title%'"""
+smartwatch_query=f"""title not ilike '%Pulseira%' and title not ilike '%Not title%'"""

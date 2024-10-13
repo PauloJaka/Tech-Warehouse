@@ -1,4 +1,4 @@
-notebook_query = """ 
+notebook_query = f""" 
 (title ILIKE '%Notebook%' OR title ILIKE '%Macbook%' OR title ILIKE '%Laptop%' OR title ILIKE '%Samsugbook%')
   AND title NOT ILIKE '%Cabo%'
   AND title NOT ILIKE '%Mochila%'

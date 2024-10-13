@@ -1,4 +1,4 @@
-tablet_query = """title NOT ILIKE '%Suporte%'
+tablet_query = f"""title NOT ILIKE '%Suporte%'
  AND title NOT ILIKE '%Pelicula%'
  AND title NOT ILIKE '%Capa%'
  AND title NOT ILIKE '%Capinha%'
