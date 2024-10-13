@@ -89,7 +89,29 @@ with TaskGroup(group_id='silver_insert_group', dag=dag) as silver_insert_group:
     silver_fact_table >>  silver_notebook >> silver_tv >> silver_smartwach >> silver_tablet >> silver_smartphone # pyright: ignore [reportUnusedExpression]
 silver_insert_group # pyright: ignore [reportUnusedExpression]
 
+def create_gold_insert_batch(dag, task_id, gold_table_insert_function, on_failure_callback=None, trigger_rule='all_done'):
+    def insert_gold_callable():
+        module = __import__('dags.tasks.tasks_gold', fromlist=[gold_table_insert_function])
+        scraping_function = getattr(module, gold_table_insert_function)
+        scraping_function()
 
+    return PythonOperator(
+        task_id=task_id,
+        python_callable=insert_gold_callable,
+        on_failure_callback=on_failure_callback,
+        trigger_rule=trigger_rule,
+        dag=dag
+    )
+        
+with TaskGroup(group_id='gold_insert_group', dag=dag) as gold_insert_group:
+    gold_fact_table = create_gold_insert_batch(dag, 'gold_fact', 'process_table_to_gold')
+    gold_notebook = create_gold_insert_batch(dag, 'notebook_dimension', 'process_table_to_gold_notebooks')
+    gold_tv = create_gold_insert_batch(dag, 'tv_dimension', 'process_table_to_gold_tv')
+    gold_smartwach = create_gold_insert_batch(dag, 'smartwatch_dimension', 'process_table_to_gold_smartwatch')
+    gold_tablet = create_gold_insert_batch(dag, 'tablet_dimension', 'process_table_to_gold_tablets')
+    gold_smartphone = create_gold_insert_batch(dag, 'smartphone_dimension', 'process_table_to_gold_smartphone')
 
-scrapy_group >> process_tables_bronze_task >> silver_insert_group # pyright: ignore [reportUnusedExpression]
+    gold_fact_table >>  gold_notebook >> gold_tv >> gold_smartwach >> gold_tablet >> gold_smartphone # pyright: ignore [reportUnusedExpression]
+gold_insert_group # pyright: ignore [reportUnusedExpression]
 
+scrapy_group >> process_tables_bronze_task >> silver_insert_group >> gold_insert_group # pyright: ignore [reportUnusedExpression]
