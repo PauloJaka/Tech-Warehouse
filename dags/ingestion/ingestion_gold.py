@@ -21,21 +21,22 @@ def move_data_silver_to_gold() -> None:
         conn.execute(query, {"ingestion_at": ingestion_at, "max_id_gold": max_id_gold})
         print(f"Dados movidos da tabela silver para gold com sucesso! Ingestão em: {ingestion_at}")
 
-def get_new_data_for_gold(silver_table_data: str, insert_table:str, additional_query: str) -> pd.DataFrame:
+def get_new_data_for_gold(silver_table_data: str, insert_table: str, additional_query: str) -> pd.DataFrame:
     engine = get_database_connection()
     max_id_insert = get_max_id(engine, insert_table)
     
-    query = f"""
+    query = text(f"""
     SELECT * FROM lakehouse.{silver_table_data}
-    WHERE id > {max_id_insert} AND {additional_query}
-    """
+    WHERE id > :max_id_insert AND {additional_query}
+    """)
     
     with engine.connect() as conn:
-        df = pd.read_sql(query, conn) 
+        df = pd.read_sql(query, conn, params={"max_id_insert": max_id_insert})
         print(f"Número de registros extraídos: {len(df)}")
         
         if df.empty:
             raise AirflowSkipException(f"Nenhum dado novo para inserir na tabela {insert_table}.")
+    
     return df
 
 def insert_data_into_gold_notebook(df: pd.DataFrame) -> None:
@@ -68,10 +69,10 @@ def insert_data_into_gold_notebook(df: pd.DataFrame) -> None:
                 'link': row['link'],
                 'free_freight': row['free_freight'],
                 'model': row['model'],
-                'CPU': row['CPU'],
-                'GPU': row['GPU'],
-                'RAM': row['RAM'],
-                'SSD': row['SSD'],
+                'CPU': row['cpu'],
+                'GPU': row['gpu'],
+                'RAM': row['ram'],
+                'SSD': row['ssd'],
                 'specifics': row['specifics'],
                 'cpu_category': row['cpu_category']
             }
@@ -140,7 +141,7 @@ def insert_data_into_gold_smartphone(df: pd.DataFrame) -> None:
                 'link': row['link'],
                 'free_freight': row['free_freight'],
                 'model': row['model'],
-                'RAM': row['RAM'],
+                'RAM': row['ram'],
                 'storage_capacity': row['storage_capacity'],
                 'specifics': row['specifics']
             } 
@@ -149,13 +150,13 @@ def insert_data_into_gold_smartphone(df: pd.DataFrame) -> None:
     
 def insert_data_into_silver_tablets(df: pd.DataFrame) -> None:
     engine = get_database_connection()
-    silver_tablets = 'd_silver_tablets'
+    gold_tablets = 'd_gold_tablets'
 
 
     with engine.connect() as conn:
         for _, row in df.iterrows():
             query = text(f"""
-            INSERT INTO lakehouse.{silver_tablets} (
+            INSERT INTO lakehouse.{gold_tablets} (
                 id, title, discount_price, original_price, brand, rating, link, free_freight,
                 model, RAM, storage_capacity, specifics
             ) VALUES (
@@ -175,12 +176,12 @@ def insert_data_into_silver_tablets(df: pd.DataFrame) -> None:
                 'link': row['link'],
                 'free_freight': row['free_freight'],
                 'model': row['model'],
-                'RAM': row['RAM'],
+                'RAM': row['ram'],
                 'storage_capacity': row['storage_capacity'],
                 'specifics': row['specifics']
             } 
             conn.execute(query, params)
-    print(f"Dados novos inseridos na tabela {silver_tablets} com sucesso.")
+    print(f"Dados novos inseridos na tabela {gold_tablets} com sucesso.")
     
 def insert_data_into_gold_smartwatch(df: pd.DataFrame) -> None:
     engine = get_database_connection()
