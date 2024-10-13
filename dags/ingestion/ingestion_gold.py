@@ -77,3 +77,107 @@ def insert_data_into_gold_notebook(df: pd.DataFrame) -> None:
             }
             conn.execute(query, params)
     print(f"Dados novos inseridos na tabela {gold_notebook} com sucesso.")
+    
+def insert_data_into_gold_tv(df: pd.DataFrame) -> None:
+    engine = get_database_connection()
+    gold_tv = 'd_gold_tv'
+
+    with engine.connect() as conn:
+        for _, row in df.iterrows():
+            query = text(f"""
+            INSERT INTO lakehouse.{gold_tv} (
+                id, title, discount_price, original_price, brand, rating, link, free_freight,
+                model, size, resolution, technology, specifics
+            ) VALUES (
+                :id, :title, :discount_price, :original_price, :brand, :rating, :link, :free_freight,
+                :model, :size, :resolution, :technology, :specifics
+            )
+            ON CONFLICT (id) DO NOTHING
+            """)
+
+            params = {
+                'id': row['id'],
+                'title': row['title'],
+                'discount_price': row['discount_price'],
+                'original_price': row['original_price'],
+                'brand': row['brand'],
+                'rating': row['rating'],
+                'link': row['link'],
+                'free_freight': row['free_freight'],
+                'model': row['model'],
+                'size': row['size'],
+                'resolution': row['resolution'],
+                'technology': row['technology'],
+                'specifics': row['specifics']
+            } 
+            conn.execute(query, params)
+    print(f"Dados novos inseridos na tabela {gold_tv} com sucesso.")
+    
+def insert_data_into_gold_smartphone(df: pd.DataFrame) -> None:
+    engine = get_database_connection()
+    gold_smartphone = 'd_gold_smartphone'
+
+    with engine.connect() as conn:
+        for _, row in df.iterrows():
+            query = text(f"""
+            INSERT INTO lakehouse.{gold_smartphone} (
+                id, title, discount_price, original_price, brand, rating, link, free_freight,
+                model, RAM, storage_capacity, specifics
+            ) VALUES (
+                :id, :title, :discount_price, :original_price, :brand, :rating, :link, :free_freight,
+                :model, :RAM, :storage_capacity, :specifics
+            )
+            ON CONFLICT (id) DO NOTHING 
+            """)
+
+            params = {
+                'id': row['id'],
+                'title': row['title'],
+                'discount_price': row['discount_price'],
+                'original_price': row['original_price'],
+                'brand': row['brand'],
+                'rating': row['rating'],
+                'link': row['link'],
+                'free_freight': row['free_freight'],
+                'model': row['model'],
+                'RAM': row['RAM'],
+                'storage_capacity': row['storage_capacity'],
+                'specifics': row['specifics']
+            } 
+            conn.execute(query, params)
+    print(f"Dados novos inseridos na tabela {gold_smartphone} com sucesso.")
+    
+def insert_data_into_silver_tablets(df: pd.DataFrame) -> None:
+    engine = get_database_connection()
+    silver_tablets = 'd_silver_tablets'
+
+
+    with engine.connect() as conn:
+        for _, row in df.iterrows():
+            query = text(f"""
+            INSERT INTO lakehouse.{silver_tablets} (
+                id, title, discount_price, original_price, brand, rating, link, free_freight,
+                model, RAM, storage_capacity, specifics
+            ) VALUES (
+                :id, :title, :discount_price, :original_price, :brand, :rating, :link, :free_freight,
+                :model, :RAM, :storage_capacity, :specifics
+            )
+            ON CONFLICT (id) DO NOTHING 
+            """)
+
+            params = {
+                'id': row['id'],
+                'title': row['title'],
+                'discount_price': row['discount_price'],
+                'original_price': row['original_price'],
+                'brand': row['brand'],
+                'rating': row['rating'],
+                'link': row['link'],
+                'free_freight': row['free_freight'],
+                'model': row['model'],
+                'RAM': row['RAM'],
+                'storage_capacity': row['storage_capacity'],
+                'specifics': row['specifics']
+            } 
+            conn.execute(query, params)
+    print(f"Dados novos inseridos na tabela {silver_tablets} com sucesso.")
