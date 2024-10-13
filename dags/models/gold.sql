@@ -39,7 +39,7 @@ create table lakehouse.d_gold_smartphone (
     RAM varchar(5),
     storage_capacity varchar(6),
     free_freight BOOLEAN,
-    specifics varchar(6)
+    specifics varchar(7)
 );
 
 create table lakehouse.d_gold_tv (
