@@ -5,7 +5,7 @@ from transformation.gold.smartphone import apply_specifics_categorys_on_smartpho
 from transformation.gold.tablet import apply_specifics_categorys_on_tablet
 from transformation.gold.smartwatch import apply_specifics_categorys_on_smartwach
 from utils.aditional_querys_gold.notebook import notebook_query
-from utils.aditional_querys_gold.notebook import tv_query
+from utils.aditional_querys_gold.tv import tv_query
 from utils.aditional_querys_gold.smartphone import smartphone_query
 from utils.aditional_querys_gold.tablets import tablet_query
 from utils.aditional_querys_gold.smartwatch import smartwatch_query
