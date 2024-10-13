@@ -181,3 +181,35 @@ def insert_data_into_silver_tablets(df: pd.DataFrame) -> None:
             } 
             conn.execute(query, params)
     print(f"Dados novos inseridos na tabela {silver_tablets} com sucesso.")
+    
+def insert_data_into_gold_smartwatch(df: pd.DataFrame) -> None:
+    engine = get_database_connection()
+    gold_smartwach = 'd_gold_smartwatch'
+    
+    with engine.connect() as conn:
+        for _, row in df.iterrows():
+            query = text(f"""
+            INSERT INTO lakehouse.{gold_smartwach} (
+                id, title, discount_price, original_price, brand, rating, link, free_freight,
+                model, specifics
+            ) VALUES (
+                :id, :title, :discount_price, :original_price, :brand, :rating, :link, :free_freight,
+                :model, :specifics
+            )
+            ON CONFLICT (id) DO NOTHING 
+            """)
+
+            params = {
+                'id': row['id'],
+                'title': row['title'],
+                'discount_price': row['discount_price'],
+                'original_price': row['original_price'],
+                'brand': row['brand'],
+                'rating': row['rating'],
+                'link': row['link'],
+                'free_freight': row['free_freight'],
+                'model': row['model'],
+                'specifics': row['specifics']
+            } 
+            conn.execute(query, params)
+    print(f"Dados novos inseridos na tabela {gold_smartwach} com sucesso.")
