@@ -164,3 +164,41 @@ SELECT
 FROM latest_notebooks
 WHERE rn = 1 
 ORDER BY created_at, title;
+
+
+WITH latest_notebooks AS (
+    SELECT 
+        dgn.title,
+        dgn.discount_price,
+        dgn.original_price,
+        dgn.brand,
+        dgn.rating,
+        dgn.link,
+        dgn.free_freight,
+        dgn.model,
+        dgn.ram,
+        dgn.specifics,
+        fg.created_at,
+        fg.updated_at,
+        fg.website,
+        ROW_NUMBER() OVER (PARTITION BY dgn.title, fg.created_at ORDER BY fg.updated_at DESC) AS rn
+    FROM d_gold_smartphone dgn
+    JOIN f_gold fg ON dgn.id = fg.id
+)
+SELECT 
+    title, 
+    discount_price, 
+    original_price, 
+    brand, 
+    rating, 
+    link, 
+    free_freight, 
+    model, 
+    specifics, 
+    ram,
+    created_at, 
+    updated_at, 
+    website
+FROM latest_notebooks
+WHERE rn = 1 
+ORDER BY created_at, title;
