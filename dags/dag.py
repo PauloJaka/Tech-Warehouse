@@ -6,6 +6,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from airflow.operators.python import PythonOperator
 from airflow.utils.task_group import TaskGroup
 from tasks.tasks_bronze import process_tables_bronze
+from tasks.tasks_gold import process_table_unique_products
 
 
 default_args = {
@@ -114,4 +115,10 @@ with TaskGroup(group_id='gold_insert_group', dag=dag) as gold_insert_group:
     gold_fact_table >>  gold_notebook >> gold_tv >> gold_smartwach >> gold_tablet >> gold_smartphone # pyright: ignore [reportUnusedExpression]
 gold_insert_group # pyright: ignore [reportUnusedExpression]
 
-scrapy_group >> process_tables_bronze_task >> silver_insert_group >> gold_insert_group # pyright: ignore [reportUnusedExpression]
+process_table_unique_products_func = PythonOperator(
+    task_id='insert_news_models',
+    python_callable=process_table_unique_products,
+    dag=dag
+)
+
+scrapy_group >> process_tables_bronze_task >> silver_insert_group >> gold_insert_group >> process_table_unique_products_func# pyright: ignore [reportUnusedExpression]

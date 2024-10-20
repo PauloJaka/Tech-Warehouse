@@ -214,3 +214,11 @@ def insert_data_into_gold_smartwatch(df: pd.DataFrame) -> None:
             } 
             conn.execute(query, params)
     print(f"Dados novos inseridos na tabela {gold_smartwach} com sucesso.")
+    
+    
+def execute_query_to_dataframe(query):
+    engine = get_database_connection()
+    
+    with engine.connect() as connection:
+        df = pd.read_sql(query, connection)
+    return df

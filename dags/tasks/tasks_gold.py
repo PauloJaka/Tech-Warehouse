@@ -1,14 +1,16 @@
-from ingestion.ingestion_gold import  move_data_silver_to_gold, get_new_data_for_gold,insert_data_into_gold_notebook, insert_data_into_gold_tv, insert_data_into_gold_smartphone, insert_data_into_silver_tablets, insert_data_into_gold_smartwatch
+from ingestion.ingestion_gold import  execute_query_to_dataframe ,move_data_silver_to_gold, get_new_data_for_gold,insert_data_into_gold_notebook, insert_data_into_gold_tv, insert_data_into_gold_smartphone, insert_data_into_silver_tablets, insert_data_into_gold_smartwatch
 from transformation.gold.notebook import apply_specifics_categorys_on_notebook
 from transformation.gold.tv import apply_specifics_categorys_on_tv
 from transformation.gold.smartphone import apply_specifics_categorys_on_smartphone 
 from transformation.gold.tablet import apply_specifics_categorys_on_tablet
 from transformation.gold.smartwatch import apply_specifics_categorys_on_smartwach
+from transformation.gold.get_links import insert_new_models
 from utils.aditional_querys_gold.notebook import notebook_query
 from utils.aditional_querys_gold.tv import tv_query
 from utils.aditional_querys_gold.smartphone import smartphone_query
 from utils.aditional_querys_gold.tablets import tablet_query
 from utils.aditional_querys_gold.smartwatch import smartwatch_query
+from utils.aditional_querys_gold.unique_products import unique_products
 
 def process_table_to_gold():
     move_data_silver_to_gold()
@@ -39,4 +41,7 @@ def process_table_to_gold_smartwatch():
     insert_data_into_gold_smartwatch(df)
 
 
+def process_table_unique_products():
+    df = execute_query_to_dataframe(unique_products)
+    insert_new_models(df)
 
