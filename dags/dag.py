@@ -32,7 +32,7 @@ def scrapy_failure_callback(context):
     print(f"Task error: {context['task_instance'].task_id}")
     # Adicione aqui qualquer outra lógica, como envio de e-mails, registro de logs, etc.
 
-def create_scraping_task(dag, task_id, scraping_function_name, on_failure_callback=None, trigger_rule='none_skipped'):
+def create_scraping_task(dag:DAG, task_id: str, scraping_function_name: str, on_failure_callback=None, trigger_rule='none_skipped'):
     def scraping_task_callable():
         module = __import__('dags.tasks.tasks_raw', fromlist=[scraping_function_name])
         scraping_function = getattr(module, scraping_function_name)
