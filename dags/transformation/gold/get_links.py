@@ -6,7 +6,7 @@ from ingestion.ingestion_raw_and_bronze import get_database_connection
 
 engine = get_database_connection()
 
-def get_first_youtube_link(produto, model):
+def get_first_youtube_link(produto: str, model: str) -> str | None:
     query = f"Review {produto} {model}"
     search = Search(query)
     
@@ -14,7 +14,7 @@ def get_first_youtube_link(produto, model):
         return search.results[0].watch_url
     return None
 
-def insert_new_models(df):
+def insert_new_models(df: pd.DataFrame) -> None:
     with engine.connect() as connection:
         existing_models = pd.read_sql("SELECT model FROM lakehouse.unique_models", connection)
     
