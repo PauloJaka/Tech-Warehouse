@@ -65,7 +65,7 @@ process_tables_bronze_task = PythonOperator(
     dag=dag
 )
 
-def create_silver_insert_batch(dag, task_id, silver_table_insert_function, on_failure_callback=None, trigger_rule='all_done'):
+def create_silver_insert_batch(dag: DAG, task_id: str, silver_table_insert_function: str, on_failure_callback=None, trigger_rule='all_done'):
     def insert_silver_callable():
         module = __import__('dags.tasks.tasks_silver', fromlist=[silver_table_insert_function])
         scraping_function = getattr(module, silver_table_insert_function)
