@@ -116,6 +116,8 @@ tech-warehouse/
 
 3. Inicie os containers:
    ```bash
+   #Apos criar a imagem e colocar o nome dela no docker compose
+   docker compose airflow-init
    docker compose up --build
    ```
 
