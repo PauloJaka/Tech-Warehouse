@@ -23,6 +23,8 @@ Um sistema avançado de coleta e análise de dados de e-commerce, utilizando web
 
 ## 🎯 Visão Geral
 
+![Airflow DAG Overview](./assets/airflow_tasks.png)
+
 O Tech Warehouse é uma solução end-to-end para análise de produtos em e-commerces, combinando web scraping automatizado, processamento de dados e análise avançada com NLP.
 
 - Web scraping automatizado de múltiplas fontes
@@ -114,7 +116,7 @@ tech-warehouse/
 
 3. Inicie os containers:
    ```bash
-   docker-compose up --build
+   docker compose up --build
    ```
 
 4. Acesse o Airflow:
@@ -167,6 +169,32 @@ ENV MOZ_HEADLESS=1
 USER airflow
 RUN pip install --no-cache-dir pydantic==2.8.2
 ```
+
+
+## 🧠 Processamento NLP
+
+### Modelos Customizados
+- Smartphones
+- TVs
+- Smartwatches
+- Tablets
+
+### Fine-tuning
+```python
+config = {
+with nlp.disable_pipes(*other_pipes):
+batches = minibatch(training_data, size=compounding(4.0, 32.0, 1.001))
+nlp.update([example], drop=0.5, sgd=optimizer, losses=losses)
+}
+```
+
+## 📈 KPIs e Analytics
+
+- Análise de Preços
+- Comparativo entre Vendedores
+- Insights de Mercado
+- Métricas de Engajamento
+
 
 ## 📊 Modelos de Dados
 
